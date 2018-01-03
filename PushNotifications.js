@@ -1,7 +1,7 @@
 const http = require('http');
 
 const SDK_VERSION = '0.9.0';
-const INTERESTS_REGEX = new RegExp('(_|=|@|,|.|:|[A-Z]|[a-z]|[0-9])+');
+const INTERESTS_REGEX = new RegExp('^(_|=|@|,|\\.|:|[A-Z]|[a-z]|[0-9])*$');
 const INTERESTS_MAX_LENGTH = 164;
 
 (function(module) {
@@ -38,18 +38,26 @@ const INTERESTS_MAX_LENGTH = 164;
     }
 
     PushNotifications.prototype.publish = function(publishRequest) {
+        if (publishRequest === undefined) {
+            throw new Error('publishRequest argument is required');
+        }
         if (!publishRequest.hasOwnProperty('interests')) {
             throw new Error('"interests" is required in publishRequest');
         }
+        if (publishRequest.interests.length < 1) {
+            throw new Error(
+                'Publish requests must target at least one interest to be delivered.'
+            );
+        }
         for (const interest of publishRequest.interests) {
             if (typeof interest !== 'string') {
-                throw new Error('interest "' + interest + '" is not a string');
+                throw new Error('interest ' + interest + ' is not a string');
             }
             if (interest.length > INTERESTS_MAX_LENGTH) {
                 throw new Error(
                     'interest "' +
                         interest +
-                        '" is longer than ' +
+                        '" is longer than the maxiumum of ' +
                         INTERESTS_MAX_LENGTH +
                         ' characters'
                 );
@@ -58,7 +66,7 @@ const INTERESTS_MAX_LENGTH = 164;
                 throw new Error(
                     'interest "' +
                         interest +
-                        '" contains a "-" which is forbidden.' +
+                        '" contains a "-" which is forbidden. ' +
                         'Have you considered using "_" instead?'
                 );
             }
@@ -105,7 +113,7 @@ const INTERESTS_MAX_LENGTH = 164;
                         const errorDescription =
                             responseBody.description || 'No description';
                         const errorString = errorType + ': ' + errorDescription;
-                        reject(errorString);
+                        reject(new Error(errorString));
                     }
                 });
             });
