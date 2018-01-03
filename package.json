@@ -1,9 +1,9 @@
 {
-  "name": "pusher-push-notifications-server",
+  "name": "pusher-push-notifications-node",
   "version": "0.9.0",
   "description": "NodeJS Server SDK for Pusher Push Notifications",
   "main": "PushNotifications.js",
-  "repository": "https://github.com/pusher/push-notifications-server-node",
+  "repository": "https://github.com/pusher/push-notifications-node",
   "author": "Pusher <support@pusher.com>",
   "license": "MIT",
   "devDependencies": {
