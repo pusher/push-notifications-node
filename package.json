@@ -13,8 +13,9 @@
     "prettier": "1.9.2"
   },
   "scripts": {
-    "test": "mocha tests.js",
+    "ci": "prettier ./*.js --tab-width 4 --single-quote -l && yarn lint && yarn test",
+    "format": "prettier ./*.js --tab-width 4 --single-quote --write",
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js --env mocha",
-    "format": "prettier ./*.js --tab-width 4 --single-quote --write"
+    "test": "mocha tests.js"
   }
 }
