@@ -7,7 +7,7 @@ let pushNotifications = new PushNotifications({
 
 pushNotifications
     .publish({
-        interests: ['()'],
+        interests: ['donuts'],
         apns: {
             aps: {
                 alert: 'Hi!'

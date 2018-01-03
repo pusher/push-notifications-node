@@ -58,15 +58,17 @@ const INTERESTS_MAX_LENGTH = 164;
                 throw new Error(
                     'interest "' +
                         interest +
-                        '" contains a "-" which is forbidden. Have you considered using "_" instead?'
+                        '" contains a "-" which is forbidden.' +
+                        'Have you considered using "_" instead?'
                 );
             }
-            console.log(INTERESTS_REGEX.exec(interest));
             if (!INTERESTS_REGEX.exec(interest)) {
                 throw new Error(
                     'interest "' +
                         interest +
-                        '" contains a forbidden character. Allowed characters are: ASCII upper/lower-case letters, numbers or one of _=@,.:'
+                        '" contains a forbidden character. Allowed ' +
+                        'characters are: ASCII upper/lower-case letters, ' +
+                        'numbers or one of _=@,.:'
                 );
             }
         }
