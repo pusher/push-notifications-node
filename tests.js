@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 
-const PushNotifications = require('./index.js');
+const PushNotifications = require('./PushNotifications.js');
 
 describe('PushNotifications Node SDK', () => {
     describe('Constructor', () => {
