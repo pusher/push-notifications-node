@@ -52,7 +52,7 @@ PushNotifications.prototype.publish = function(publishRequest) {
         }
         if (interest.length > INTERESTS_MAX_LENGTH) {
             throw new Error(
-                `interest ${interest} is longer than the maxium of ` +
+                `interest ${interest} is longer than the maximum of ` +
                     `${INTERESTS_MAX_LENGTH} characters`
             );
         }
