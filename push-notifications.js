@@ -26,7 +26,7 @@ function PushNotifications(options) {
     this.secretKey = options.secretKey;
 
     if (!options.hasOwnProperty('endpoint')) {
-        this.endpoint = this.instanceId + '.pushnotifications.pusher.com';
+        this.endpoint = `${this.instanceId}.pushnotifications.pusher.com`;
     } else if (typeof options.endpoint !== 'string') {
         throw new Error('endpoint must be a string');
     } else {
@@ -48,31 +48,24 @@ PushNotifications.prototype.publish = function(publishRequest) {
     }
     for (const interest of publishRequest.interests) {
         if (typeof interest !== 'string') {
-            throw new Error('interest ' + interest + ' is not a string');
+            throw new Error(`interest ${interest} is not a string`);
         }
         if (interest.length > INTERESTS_MAX_LENGTH) {
             throw new Error(
-                'interest "' +
-                    interest +
-                    '" is longer than the maxiumum of ' +
-                    INTERESTS_MAX_LENGTH +
-                    ' characters'
+                `interest ${interest} is longer than the maxium of ` +
+                    `${INTERESTS_MAX_LENGTH} characters`
             );
         }
         if (interest.includes('-')) {
             throw new Error(
-                'interest "' +
-                    interest +
-                    '" contains a "-" which is forbidden. ' +
-                    'Have you considered using "_" instead?'
+                `interest "${interest}" contains a "-" which is forbidden. ` +
+                    'Have you considered using a "_" instead?'
             );
         }
         if (!INTERESTS_REGEX.exec(interest)) {
             throw new Error(
-                'interest "' +
-                    interest +
-                    '" contains a forbidden character. Allowed ' +
-                    'characters are: ASCII upper/lower-case letters, ' +
+                `interest "${interest}" contains a forbidden character. ` +
+                    'Allowed characters are: ASCII upper/lower-case letters, ' +
                     'numbers or one of _=@,.:'
             );
         }
@@ -81,14 +74,14 @@ PushNotifications.prototype.publish = function(publishRequest) {
     const payload = JSON.stringify(publishRequest);
     const options = {
         host: this.endpoint,
-        path: '/publish_api/v1/instances/' + this.instanceId + '/publishes',
+        path: `/publish_api/v1/instances/${this.instanceId}/publishes`,
         port: 80,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(payload),
-            Authorization: 'Bearer ' + this.secretKey,
-            'X-Pusher-Library': 'pusher-push-notifications-node ' + SDK_VERSION
+            Authorization: `Bearer ${this.secretKey}`,
+            'X-Pusher-Library': `pusher-push-notifications-node ${SDK_VERSION}`
         }
     };
 
@@ -113,7 +106,7 @@ function doRequest(payload, options) {
                     const errorType = responseBody.error || 'Unknown error';
                     const errorDescription =
                         responseBody.description || 'No description';
-                    const errorString = errorType + ': ' + errorDescription;
+                    const errorString = `${errorType}:${errorDescription}`;
                     reject(new Error(errorString));
                 }
             });
