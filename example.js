@@ -1,4 +1,4 @@
-const PushNotifications = require('./PushNotifications.js');
+const PushNotifications = require('./push-notifications.js');
 
 let pushNotifications = new PushNotifications({
     instanceId: '8f9a6e22-2483-49aa-8552-125f1a4c5781',

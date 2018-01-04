@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 const nock = require('nock');
 
-const PushNotifications = require('./PushNotifications.js');
+const PushNotifications = require('./push-notifications.js');
 
 describe('PushNotifications Node SDK', () => {
     describe('Constructor', () => {
