@@ -1,5 +1,5 @@
-# Pusher Push Notifications Node.js Server SDK
 [![Build Status](https://travis-ci.org/pusher/push-notifications-node.svg?branch=master)](https://travis-ci.org/pusher/push-notifications-node)
+# Pusher Push Notifications Node.js Server SDK
 Full documentation for this SDK can be found [here](https://docs.pusher.com/push-notifications/reference/server-sdk-node)
 
 ## Installation
