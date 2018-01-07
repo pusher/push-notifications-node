@@ -209,26 +209,5 @@ describe('PushNotifications Node SDK', () => {
                     expect(e).to.exist;
                 });
         });
-
-        it('should reject the returned promise on HTTP error', () => {
-            nock(new RegExp('/.*/'))
-                .post(new RegExp('/.*/'))
-                .reply(400, {
-                    error: 'Fake error',
-                    description: 'A fake error.'
-                });
-
-            const pn = new PushNotifications({
-                instanceId: '1234',
-                secretKey: '1234'
-            });
-            pn
-                .publish({
-                    interests: ['donuts']
-                })
-                .catch(e => {
-                    expect(e).to.exist;
-                });
-        });
     });
 });
