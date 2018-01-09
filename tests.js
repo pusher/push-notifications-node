@@ -13,15 +13,21 @@ describe('PushNotifications Node SDK', () => {
         });
 
         it('should fail if no options passed', () => {
-            expect(() => PushNotifications()).to.throw();
+            expect(() => PushNotifications()).to.throw(
+                'PushNotifications options object is required'
+            );
         });
 
         it('should fail if no instanceId passed', () => {
-            expect(() => PushNotifications({ secretKey: '1234' })).to.throw();
+            expect(() => PushNotifications({ secretKey: '1234' })).to.throw(
+                '"instanceId" is required in PushNotifications options'
+            );
         });
 
         it('should fail if no secretKey passed', () => {
-            expect(() => PushNotifications({ instanceId: '1234' })).to.throw();
+            expect(() => PushNotifications({ instanceId: '1234' })).to.throw(
+                '"secretKey" is required in PushNotifications options'
+            );
         });
 
         it('should fail if instanceId is not a string', () => {
@@ -120,7 +126,9 @@ describe('PushNotifications Node SDK', () => {
                 instanceId: '1234',
                 secretKey: '1234'
             });
-            expect(() => pn.publish()).to.throw();
+            expect(() => pn.publish()).to.throw(
+                'interests argument is required'
+            );
         });
 
         it('should fail if interests parameter passed is not an array', () => {
@@ -138,7 +146,9 @@ describe('PushNotifications Node SDK', () => {
                 instanceId: '1234',
                 secretKey: '1234'
             });
-            expect(() => pn.publish(['donuts'])).to.throw();
+            expect(() => pn.publish(['donuts'])).to.throw(
+                'publishRequest argument is required'
+            );
         });
 
         it('should fail if no interests are passed', () => {
@@ -192,6 +202,7 @@ describe('PushNotifications Node SDK', () => {
             });
             pn.publish(['donuts'], {}).catch(e => {
                 expect(e).to.exist;
+                expect(e.message).to.contain('Not allow net connect');
             });
         });
 
@@ -209,6 +220,7 @@ describe('PushNotifications Node SDK', () => {
             });
             pn.publish(['donuts'], {}).catch(e => {
                 expect(e).to.exist;
+                expect(e.message).to.contain('A fake error.');
             });
         });
     });
