@@ -82,8 +82,7 @@ describe('PushNotifications Node SDK', () => {
                 instanceId: 'INSTANCE_ID',
                 secretKey: 'SECRET_KEY'
             });
-            const response = pn.publish({
-                interests: ['donuts'],
+            const response = pn.publish(['donuts'], {
                 apns: {
                     aps: {
                         alert: 'Hi!'
@@ -102,7 +101,7 @@ describe('PushNotifications Node SDK', () => {
                     'content-type': 'application/json',
                     'content-length': 55,
                     authorization: 'Bearer SECRET_KEY',
-                    'x-pusher-library': 'pusher-push-notifications-node 0.9.0',
+                    'x-pusher-library': 'pusher-push-notifications-node 0.10.0',
                     host: 'instance_id.pushnotifications.pusher.com'
                 });
                 expect(body).to.deep.equal({
@@ -116,12 +115,20 @@ describe('PushNotifications Node SDK', () => {
             });
         });
 
-        it('should fail if no publishRequest is passed', () => {
+        it('should fail if no interests nor publishRequest are passed', () => {
             const pn = new PushNotifications({
                 instanceId: '1234',
                 secretKey: '1234'
             });
             expect(() => pn.publish()).to.throw();
+        });
+
+        it('should fail if no publishRequest is passed', () => {
+            const pn = new PushNotifications({
+                instanceId: '1234',
+                secretKey: '1234'
+            });
+            expect(() => pn.publish(['donuts'])).to.throw();
         });
 
         it('should fail if no interests are passed', () => {
@@ -180,13 +187,9 @@ describe('PushNotifications Node SDK', () => {
                 instanceId: '1234',
                 secretKey: '1234'
             });
-            pn
-                .publish({
-                    interests: ['donuts']
-                })
-                .catch(e => {
-                    expect(e).to.exist;
-                });
+            pn.publish(['donuts'], {}).catch(e => {
+                expect(e).to.exist;
+            });
         });
 
         it('should reject the returned promise on HTTP error', () => {
@@ -201,13 +204,9 @@ describe('PushNotifications Node SDK', () => {
                 instanceId: '1234',
                 secretKey: '1234'
             });
-            pn
-                .publish({
-                    interests: ['donuts']
-                })
-                .catch(e => {
-                    expect(e).to.exist;
-                });
+            pn.publish(['donuts'], {}).catch(e => {
+                expect(e).to.exist;
+            });
         });
     });
 });
