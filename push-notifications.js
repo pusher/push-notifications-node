@@ -1,6 +1,6 @@
 const http = require('http');
 
-const SDK_VERSION = '0.9.0';
+const SDK_VERSION = '0.10.0';
 const INTERESTS_REGEX = new RegExp('^(_|=|@|,|\\.|:|[A-Z]|[a-z]|[0-9])*$');
 const INTERESTS_MAX_LENGTH = 164;
 
@@ -34,19 +34,22 @@ function PushNotifications(options) {
     }
 }
 
-PushNotifications.prototype.publish = function(publishRequest) {
-    if (publishRequest === undefined) {
-        throw new Error('publishRequest argument is required');
+PushNotifications.prototype.publish = function(interests, publishRequest) {
+    if (interests === undefined) {
+        throw new Error('interests argument is required');
     }
-    if (!publishRequest.hasOwnProperty('interests')) {
-        throw new Error('"interests" is required in publishRequest');
+    if (!(interests instanceof Array)) {
+        throw new Error('interests argument is must be an array');
     }
-    if (publishRequest.interests.length < 1) {
+    if (interests.length < 1) {
         throw new Error(
             'Publish requests must target at least one interest to be delivered.'
         );
     }
-    for (const interest of publishRequest.interests) {
+    if (publishRequest === undefined) {
+        throw new Error('publishRequest argument is required');
+    }
+    for (const interest of interests) {
         if (typeof interest !== 'string') {
             throw new Error(`interest ${interest} is not a string`);
         }
@@ -71,11 +74,12 @@ PushNotifications.prototype.publish = function(publishRequest) {
         }
     }
 
+    publishRequest.interests = interests;
     const payload = JSON.stringify(publishRequest);
     const options = {
         host: this.endpoint,
         path: `/publish_api/v1/instances/${this.instanceId}/publishes`,
-        port: 80,
+        port: 443,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

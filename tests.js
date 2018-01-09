@@ -13,15 +13,21 @@ describe('PushNotifications Node SDK', () => {
         });
 
         it('should fail if no options passed', () => {
-            expect(() => PushNotifications()).to.throw();
+            expect(() => PushNotifications()).to.throw(
+                'PushNotifications options object is required'
+            );
         });
 
         it('should fail if no instanceId passed', () => {
-            expect(() => PushNotifications({ secretKey: '1234' })).to.throw();
+            expect(() => PushNotifications({ secretKey: '1234' })).to.throw(
+                '"instanceId" is required in PushNotifications options'
+            );
         });
 
         it('should fail if no secretKey passed', () => {
-            expect(() => PushNotifications({ instanceId: '1234' })).to.throw();
+            expect(() => PushNotifications({ instanceId: '1234' })).to.throw(
+                '"secretKey" is required in PushNotifications options'
+            );
         });
 
         it('should fail if instanceId is not a string', () => {
@@ -82,8 +88,7 @@ describe('PushNotifications Node SDK', () => {
                 instanceId: 'INSTANCE_ID',
                 secretKey: 'SECRET_KEY'
             });
-            const response = pn.publish({
-                interests: ['donuts'],
+            const response = pn.publish(['donuts'], {
                 apns: {
                     aps: {
                         alert: 'Hi!'
@@ -102,7 +107,7 @@ describe('PushNotifications Node SDK', () => {
                     'content-type': 'application/json',
                     'content-length': 55,
                     authorization: 'Bearer SECRET_KEY',
-                    'x-pusher-library': 'pusher-push-notifications-node 0.9.0',
+                    'x-pusher-library': 'pusher-push-notifications-node 0.10.0',
                     host: 'instance_id.pushnotifications.pusher.com'
                 });
                 expect(body).to.deep.equal({
@@ -116,12 +121,34 @@ describe('PushNotifications Node SDK', () => {
             });
         });
 
+        it('should fail if no interests nor publishRequest are passed', () => {
+            const pn = new PushNotifications({
+                instanceId: '1234',
+                secretKey: '1234'
+            });
+            expect(() => pn.publish()).to.throw(
+                'interests argument is required'
+            );
+        });
+
+        it('should fail if interests parameter passed is not an array', () => {
+            const pn = new PushNotifications({
+                instanceId: '1234',
+                secretKey: '1234'
+            });
+            expect(() => pn.publish('donuts')).to.throw(
+                'interests argument is must be an array'
+            );
+        });
+
         it('should fail if no publishRequest is passed', () => {
             const pn = new PushNotifications({
                 instanceId: '1234',
                 secretKey: '1234'
             });
-            expect(() => pn.publish()).to.throw();
+            expect(() => pn.publish(['donuts'])).to.throw(
+                'publishRequest argument is required'
+            );
         });
 
         it('should fail if no interests are passed', () => {
@@ -129,8 +156,9 @@ describe('PushNotifications Node SDK', () => {
                 instanceId: '1234',
                 secretKey: '1234'
             });
-            expect(() => pn.publish({})).to.throw();
-            expect(() => pn.publish({ interests: [] })).to.throw();
+            expect(() => pn.publish([], {})).to.throw(
+                'Publish requests must target at least one interest to be delivered'
+            );
         });
 
         it('should fail if an interest is not a string', () => {
@@ -138,11 +166,9 @@ describe('PushNotifications Node SDK', () => {
                 instanceId: '1234',
                 secretKey: '1234'
             });
-            expect(() =>
-                pn.publish({
-                    interests: ['good_interest', false]
-                })
-            ).to.throw();
+            expect(() => pn.publish(['good_interest', false], {})).to.throw(
+                'interest false is not a string'
+            );
         });
 
         it('should fail if an interest is too long', () => {
@@ -151,10 +177,8 @@ describe('PushNotifications Node SDK', () => {
                 secretKey: '1234'
             });
             expect(() =>
-                pn.publish({
-                    interests: ['good_interest', 'a'.repeat(165)]
-                })
-            ).to.throw();
+                pn.publish(['good_interest', 'a'.repeat(165)], {})
+            ).to.throw('is longer than the maximum of 164 characters');
         });
 
         it('should fail if an interest contains invalid characters', () => {
@@ -163,15 +187,11 @@ describe('PushNotifications Node SDK', () => {
                 secretKey: '1234'
             });
             expect(() =>
-                pn.publish({
-                    interests: ['good_interest', 'bad-interest']
-                })
-            ).to.throw();
+                pn.publish(['good_interest', 'bad-interest'], {})
+            ).to.throw('contains a "-" which is forbidden');
             expect(() =>
-                pn.publish({
-                    interests: ['good_interest', 'bad(interest)']
-                })
-            ).to.throw();
+                pn.publish(['good_interest', 'bad(interest)'], {})
+            ).to.throw('contains a forbidden character');
         });
 
         it('should reject the returned promise on network error', () => {
@@ -180,13 +200,10 @@ describe('PushNotifications Node SDK', () => {
                 instanceId: '1234',
                 secretKey: '1234'
             });
-            pn
-                .publish({
-                    interests: ['donuts']
-                })
-                .catch(e => {
-                    expect(e).to.exist;
-                });
+            pn.publish(['donuts'], {}).catch(e => {
+                expect(e).to.exist;
+                expect(e.message).to.contain('Not allow net connect');
+            });
         });
 
         it('should reject the returned promise on HTTP error', () => {
@@ -201,13 +218,10 @@ describe('PushNotifications Node SDK', () => {
                 instanceId: '1234',
                 secretKey: '1234'
             });
-            pn
-                .publish({
-                    interests: ['donuts']
-                })
-                .catch(e => {
-                    expect(e).to.exist;
-                });
+            pn.publish(['donuts'], {}).catch(e => {
+                expect(e).to.exist;
+                expect(e.message).to.contain('A fake error.');
+            });
         });
     });
 });
