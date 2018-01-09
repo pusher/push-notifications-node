@@ -136,8 +136,9 @@ describe('PushNotifications Node SDK', () => {
                 instanceId: '1234',
                 secretKey: '1234'
             });
-            expect(() => pn.publish({})).to.throw();
-            expect(() => pn.publish({ interests: [] })).to.throw();
+            expect(() => pn.publish([], {})).to.throw(
+                'Publish requests must target at least one interest to be delivered'
+            );
         });
 
         it('should fail if an interest is not a string', () => {
@@ -145,11 +146,9 @@ describe('PushNotifications Node SDK', () => {
                 instanceId: '1234',
                 secretKey: '1234'
             });
-            expect(() =>
-                pn.publish({
-                    interests: ['good_interest', false]
-                })
-            ).to.throw();
+            expect(() => pn.publish(['good_interest', false], {})).to.throw(
+                'interest false is not a string'
+            );
         });
 
         it('should fail if an interest is too long', () => {
@@ -158,10 +157,8 @@ describe('PushNotifications Node SDK', () => {
                 secretKey: '1234'
             });
             expect(() =>
-                pn.publish({
-                    interests: ['good_interest', 'a'.repeat(165)]
-                })
-            ).to.throw();
+                pn.publish(['good_interest', 'a'.repeat(165)], {})
+            ).to.throw('is longer than the maximum of 164 characters');
         });
 
         it('should fail if an interest contains invalid characters', () => {
@@ -170,15 +167,11 @@ describe('PushNotifications Node SDK', () => {
                 secretKey: '1234'
             });
             expect(() =>
-                pn.publish({
-                    interests: ['good_interest', 'bad-interest']
-                })
-            ).to.throw();
+                pn.publish(['good_interest', 'bad-interest'], {})
+            ).to.throw('contains a "-" which is forbidden');
             expect(() =>
-                pn.publish({
-                    interests: ['good_interest', 'bad(interest)']
-                })
-            ).to.throw();
+                pn.publish(['good_interest', 'bad(interest)'], {})
+            ).to.throw('contains a forbidden character');
         });
 
         it('should reject the returned promise on network error', () => {
