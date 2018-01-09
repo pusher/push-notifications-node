@@ -1,6 +1,6 @@
 {
   "name": "pusher-push-notifications-node",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "NodeJS Server SDK for Pusher Push Notifications",
   "main": "PushNotifications.js",
   "repository": "https://github.com/pusher/push-notifications-node",
