@@ -76,7 +76,7 @@ PushNotifications.prototype.publish = function(interests, publishRequest) {
     const options = {
         host: this.endpoint,
         path: `/publish_api/v1/instances/${this.instanceId}/publishes`,
-        port: 80,
+        port: 443,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
