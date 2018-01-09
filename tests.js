@@ -123,6 +123,16 @@ describe('PushNotifications Node SDK', () => {
             expect(() => pn.publish()).to.throw();
         });
 
+        it('should fail if interests parameter passed is not an array', () => {
+            const pn = new PushNotifications({
+                instanceId: '1234',
+                secretKey: '1234'
+            });
+            expect(() => pn.publish('donuts')).to.throw(
+                'interests argument is must be an array'
+            );
+        });
+
         it('should fail if no publishRequest is passed', () => {
             const pn = new PushNotifications({
                 instanceId: '1234',

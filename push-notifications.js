@@ -38,6 +38,9 @@ PushNotifications.prototype.publish = function(interests, publishRequest) {
     if (interests === undefined) {
         throw new Error('interests argument is required');
     }
+    if (!(interests instanceof Array)) {
+        throw new Error('interests argument is must be an array');
+    }
     if (interests.length < 1) {
         throw new Error(
             'Publish requests must target at least one interest to be delivered.'
