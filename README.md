@@ -39,7 +39,9 @@ pushNotifications.publish(
       }
     }
   }
-).then((publishResponse) => {
-  console.log('Just published:', publishResponse.publishId);
+}).then((publishResponse) => {
+  console.log('Just published:', publishResponse.publishId]);
+}).catch((error) => {
+  console.log('Error:', error);
 });
 ```

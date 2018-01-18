@@ -1,4 +1,4 @@
-const http = require('http');
+const https = require('https');
 
 const SDK_VERSION = '0.10.0';
 const INTERESTS_REGEX = new RegExp('^(_|=|@|,|\\.|:|[A-Z]|[a-z]|[0-9])*$');
@@ -94,7 +94,7 @@ PushNotifications.prototype.publish = function(interests, publishRequest) {
 
 function doRequest(payload, options) {
     const promise = new Promise((resolve, reject) => {
-        const request = http.request(options, response => {
+        const request = https.request(options, response => {
             const wasSuccessful = response.statusCode === 200;
             let responseString = '';
             response.setEncoding('utf8');
