@@ -40,7 +40,7 @@ pushNotifications.publish(
     }
   }
 }).then((publishResponse) => {
-  console.log('Just published:', publishResponse.publishId]);
+  console.log('Just published:', publishResponse.publishId);
 }).catch((error) => {
   console.log('Error:', error);
 });
