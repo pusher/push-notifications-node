@@ -187,10 +187,7 @@ describe('PushNotifications Node SDK', () => {
                 secretKey: '1234'
             });
             expect(() =>
-                pn.publish(['good_interest', 'bad-interest'], {})
-            ).to.throw('contains a "-" which is forbidden');
-            expect(() =>
-                pn.publish(['good_interest', 'bad(interest)'], {})
+                pn.publish(['good-interest', 'bad|interest'], {})
             ).to.throw('contains a forbidden character');
         });
 

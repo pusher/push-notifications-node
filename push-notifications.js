@@ -1,7 +1,7 @@
 const https = require('https');
 
 const SDK_VERSION = '0.10.1';
-const INTERESTS_REGEX = new RegExp('^(_|=|@|,|\\.|:|[A-Z]|[a-z]|[0-9])*$');
+const INTERESTS_REGEX = new RegExp('^(_|\\-|=|@|,|\\.|:|[A-Z]|[a-z]|[0-9])*$');
 const INTERESTS_MAX_LENGTH = 164;
 
 function PushNotifications(options) {
@@ -59,17 +59,11 @@ PushNotifications.prototype.publish = function(interests, publishRequest) {
                     `${INTERESTS_MAX_LENGTH} characters`
             );
         }
-        if (interest.includes('-')) {
-            throw new Error(
-                `interest "${interest}" contains a "-" which is forbidden. ` +
-                    'Have you considered using a "_" instead?'
-            );
-        }
         if (!INTERESTS_REGEX.exec(interest)) {
             throw new Error(
                 `interest "${interest}" contains a forbidden character. ` +
                     'Allowed characters are: ASCII upper/lower-case letters, ' +
-                    'numbers or one of _=@,.:'
+                    'numbers or one of _-=@,.:'
             );
         }
     }
