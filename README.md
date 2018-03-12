@@ -30,17 +30,20 @@ let pushNotifications = new PushNotifications({
 ### Publishing a Notification
 Once you have created your PushNotifications instance you can publish a push notification to your registered & subscribed devices:
 ```javascript
-pushNotifications.publish(
-  ['hello'],
-  {
-    apns: {
-      aps: {
-        alert: 'Hello!'
-      }
+pushNotifications.publish(['hello'], {
+  apns: {
+    aps: {
+      alert: 'Hello!'
+    }
+  },
+  fcm: {
+    notification: {
+      title: 'Hello',
+      body: 'Hello, world!'
     }
   }
 }).then((publishResponse) => {
-  console.log('Just published:', publishResponse.publishId);
+  console.log('Just published:', publishResponse.publishId]);
 }).catch((error) => {
   console.log('Error:', error);
 });
