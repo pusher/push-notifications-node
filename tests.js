@@ -1,5 +1,6 @@
 const expect = require('chai').expect;
 const nock = require('nock');
+const crypto = require('crypto');
 
 const PushNotifications = require('./push-notifications.js');
 
@@ -64,6 +65,15 @@ describe('PushNotifications Node SDK', () => {
     });
 
     describe('publish', () => {
+        let pn;
+
+        beforeEach(function() {
+            pn = new PushNotifications({
+                instanceId: '1234',
+                secretKey: '1234'
+            });
+        });
+
         afterEach(function() {
             nock.cleanAll();
         });
@@ -122,70 +132,59 @@ describe('PushNotifications Node SDK', () => {
         });
 
         it('should fail if no interests nor publishRequest are passed', () => {
-            const pn = new PushNotifications({
-                instanceId: '1234',
-                secretKey: '1234'
-            });
             expect(() => pn.publish()).to.throw(
                 'interests argument is required'
             );
         });
 
         it('should fail if interests parameter passed is not an array', () => {
-            const pn = new PushNotifications({
-                instanceId: '1234',
-                secretKey: '1234'
-            });
             expect(() => pn.publish('donuts')).to.throw(
                 'interests argument is must be an array'
             );
         });
 
         it('should fail if no publishRequest is passed', () => {
-            const pn = new PushNotifications({
-                instanceId: '1234',
-                secretKey: '1234'
-            });
             expect(() => pn.publish(['donuts'])).to.throw(
                 'publishRequest argument is required'
             );
         });
 
         it('should fail if no interests are passed', () => {
-            const pn = new PushNotifications({
-                instanceId: '1234',
-                secretKey: '1234'
-            });
             expect(() => pn.publish([], {})).to.throw(
                 'Publish requests must target at least one interest to be delivered'
             );
         });
 
+        it('should fail if too many interests are passed', () => {
+            let interests = [];
+            const MAX_INTERESTS = 100;
+            for (let i = 0; i < MAX_INTERESTS + 1; i++) {
+                interests.push(randomValueHex(15));
+            }
+            expect(() => pn.publish(interests, {})).to.throw();
+        });
+
+        it('should succeed if interests within range 1 and 100', () => {
+            let interests = [];
+            for (let i = 0; i < 20 + 1; i++) {
+                interests.push(randomValueHex(15));
+            }
+            expect(() => pn.publish(interests, {})).to.throw();
+        });
+
         it('should fail if an interest is not a string', () => {
-            const pn = new PushNotifications({
-                instanceId: '1234',
-                secretKey: '1234'
-            });
             expect(() => pn.publish(['good_interest', false], {})).to.throw(
                 'interest false is not a string'
             );
         });
 
         it('should fail if an interest is too long', () => {
-            const pn = new PushNotifications({
-                instanceId: '1234',
-                secretKey: '1234'
-            });
             expect(() =>
                 pn.publish(['good_interest', 'a'.repeat(165)], {})
             ).to.throw('is longer than the maximum of 164 characters');
         });
 
         it('should fail if an interest contains invalid characters', () => {
-            const pn = new PushNotifications({
-                instanceId: '1234',
-                secretKey: '1234'
-            });
             expect(() =>
                 pn.publish(['good-interest', 'bad|interest'], {})
             ).to.throw('contains a forbidden character');
@@ -193,10 +192,7 @@ describe('PushNotifications Node SDK', () => {
 
         it('should reject the returned promise on network error', () => {
             nock.disableNetConnect();
-            const pn = new PushNotifications({
-                instanceId: '1234',
-                secretKey: '1234'
-            });
+
             pn.publish(['donuts'], {}).catch(e => {
                 expect(e).to.exist;
                 expect(e.message).to.contain('Not allow net connect');
@@ -211,10 +207,6 @@ describe('PushNotifications Node SDK', () => {
                     description: 'A fake error.'
                 });
 
-            const pn = new PushNotifications({
-                instanceId: '1234',
-                secretKey: '1234'
-            });
             pn.publish(['donuts'], {}).catch(e => {
                 expect(e).to.exist;
                 expect(e.message).to.contain('A fake error.');
@@ -222,3 +214,12 @@ describe('PushNotifications Node SDK', () => {
         });
     });
 });
+
+//function code taken from http://blog.tompawlak.org/how-to-generate-random-values-nodejs-javascript
+function randomValueHex(len) {
+    return crypto
+        .randomBytes(Math.ceil(len / 2))
+        .toString('hex') // convert to hexadecimal format
+        .slice(0, len)
+        .toUpperCase(); // return required number of characters
+}
