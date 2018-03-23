@@ -164,9 +164,9 @@ describe('PushNotifications Node SDK', () => {
             expect(() => pn.publish(interests, {})).to.throw();
         });
 
-        it('should succeed if interests within range 1 and 100', () => {
+        it('should succeed if there are 100 interests', () => {
             let interests = [];
-            for (let i = 0; i < 20 + 1; i++) {
+            for (let i = 0; i < 100; i++) {
                 interests.push(randomValueHex(15));
             }
             expect(() => pn.publish(interests, {})).to.be.ok;
