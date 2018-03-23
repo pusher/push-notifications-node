@@ -169,7 +169,7 @@ describe('PushNotifications Node SDK', () => {
             for (let i = 0; i < 20 + 1; i++) {
                 interests.push(randomValueHex(15));
             }
-            expect(() => pn.publish(interests, {})).to.throw();
+            expect(() => pn.publish(interests, {})).to.be.ok;
         });
 
         it('should fail if an interest is not a string', () => {
