@@ -2,7 +2,8 @@ const https = require('https');
 
 const SDK_VERSION = '0.10.2';
 const INTERESTS_REGEX = new RegExp('^(_|\\-|=|@|,|\\.|:|[A-Z]|[a-z]|[0-9])*$');
-const INTERESTS_MAX_LENGTH = 164;
+const INTEREST_STRING_MAX_LENGTH = 164;
+const INTEREST_ARRAY_MAX_LENGTH = 100;
 
 function PushNotifications(options) {
     if (typeof options !== 'object') {
@@ -46,6 +47,13 @@ PushNotifications.prototype.publish = function(interests, publishRequest) {
             'Publish requests must target at least one interest to be delivered.'
         );
     }
+    if (interests.length > INTEREST_ARRAY_MAX_LENGTH) {
+        throw new Error(
+            `Number of interests (${
+                interests.length
+            }) exceeds maximum of ${INTEREST_ARRAY_MAX_LENGTH}.`
+        );
+    }
     if (publishRequest === undefined) {
         throw new Error('publishRequest argument is required');
     }
@@ -53,10 +61,10 @@ PushNotifications.prototype.publish = function(interests, publishRequest) {
         if (typeof interest !== 'string') {
             throw new Error(`interest ${interest} is not a string`);
         }
-        if (interest.length > INTERESTS_MAX_LENGTH) {
+        if (interest.length > INTEREST_STRING_MAX_LENGTH) {
             throw new Error(
                 `interest ${interest} is longer than the maximum of ` +
-                    `${INTERESTS_MAX_LENGTH} characters`
+                    `${INTEREST_STRING_MAX_LENGTH} characters`
             );
         }
         if (!INTERESTS_REGEX.exec(interest)) {
