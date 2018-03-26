@@ -49,7 +49,9 @@ PushNotifications.prototype.publish = function(interests, publishRequest) {
     }
     if (interests.length > INTEREST_ARRAY_MAX_LENGTH) {
         throw new Error(
-            `Number of interests exceeds maximum of ${INTEREST_ARRAY_MAX_LENGTH}.`
+            `Number of interests (${
+                interests.length
+            }) exceeds maximum of ${INTEREST_ARRAY_MAX_LENGTH}.`
         );
     }
     if (publishRequest === undefined) {
