@@ -7,19 +7,19 @@ The Pusher Notifications Node.js server SDK is available on npm [here](https://w
 
 You can install this SDK by using [npm](https://npmjs.com):
 ```bash
-$ npm install pusher-push-notifications-node --save
+$ npm install @pusher/push-notifications-server --save
 ```
 
 Or [yarn](https://yarnpkg.com/) if you prefer:
 ```bash
-$ yarn add pusher-push-notifications-node
+$ yarn add @pusher/push-notifications-server
 ```
 
 ## Usage
 ### Configuring the SDK for Your Instance
 Use your instance id and secret (you can get these from the [dashboard](https://dash.pusher.com)) to create a PushNotifications instance:
 ```javascript
-const PushNotifications = require('pusher-push-notifications-node');
+const PushNotifications = require('@pusher/push-notifications-server');
 
 let pushNotifications = new PushNotifications({
   instanceId: 'YOUR_INSTANCE_ID_HERE',
