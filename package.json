@@ -18,5 +18,11 @@
         "format": "prettier ./*.js --write",
         "lint": "./node_modules/eslint/bin/eslint.js ./*.js --env mocha",
         "test": "mocha tests.js"
-    }
+    },
+    "keywords": [
+        "push notifications",
+        "notifications",
+        "pusher",
+        "realtime"
+    ]
 }
