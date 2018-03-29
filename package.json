@@ -1,5 +1,5 @@
 {
-    "name": "pusher-push-notifications-node",
+    "name": "@pusher/push-notifications-server",
     "version": "0.10.3",
     "description": "NodeJS Server SDK for Pusher Push Notifications",
     "main": "push-notifications.js",
@@ -18,5 +18,11 @@
         "format": "prettier ./*.js --write",
         "lint": "./node_modules/eslint/bin/eslint.js ./*.js --env mocha",
         "test": "mocha tests.js"
-    }
+    },
+    "keywords": [
+        "push notifications",
+        "notifications",
+        "pusher",
+        "realtime"
+    ]
 }
