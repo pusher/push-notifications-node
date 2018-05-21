@@ -3,7 +3,7 @@
 Full documentation for this SDK can be found [here](https://docs.pusher.com/push-notifications/reference/server-sdk-node)
 
 ## Installation
-The Pusher Notifications Node.js server SDK is available on npm [here](https://www.npmjs.com/package/pusher-push-notifications-node).
+The Pusher Notifications Node.js server SDK is available on npm [here](https://www.npmjs.com/package/@pusher/push-notifications-server).
 
 You can install this SDK by using [npm](https://npmjs.com):
 ```bash
