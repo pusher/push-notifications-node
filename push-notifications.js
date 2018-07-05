@@ -105,7 +105,14 @@ function doRequest(payload, options) {
                 responseString += chunk;
             });
             response.on('end', function() {
-                const responseBody = JSON.parse(responseString);
+                let responseBody;
+                try {
+                    responseBody = JSON.parse(responseString);
+                } catch (_) {
+                    reject(
+                        new Error('Unknown error - invalid server response')
+                    );
+                }
                 if (wasSuccessful) {
                     resolve(responseBody);
                 } else {

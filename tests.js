@@ -193,7 +193,7 @@ describe('PushNotifications Node SDK', () => {
         it('should reject the returned promise on network error', () => {
             nock.disableNetConnect();
 
-            pn.publish(['donuts'], {}).catch(e => {
+            return pn.publish(['donuts'], {}).catch(e => {
                 expect(e).to.exist;
                 expect(e.message).to.contain('Not allow net connect');
             });
@@ -207,10 +207,31 @@ describe('PushNotifications Node SDK', () => {
                     description: 'A fake error.'
                 });
 
-            pn.publish(['donuts'], {}).catch(e => {
-                expect(e).to.exist;
-                expect(e.message).to.contain('A fake error.');
-            });
+            return pn
+                .publish(['donuts'], {})
+                .then(() => {
+                    throw new Error('This should not succeed');
+                })
+                .catch(e => {
+                    expect(e).to.exist;
+                    expect(e.message).to.contain('A fake error.');
+                });
+        });
+
+        it('should reject the returned promise if response is not JSON', () => {
+            nock(new RegExp('/.*/'))
+                .post(new RegExp('/.*/'))
+                .reply(200, 'thisisnotjson{{{{{');
+
+            return pn
+                .publish(['donuts'], {})
+                .then(() => {
+                    throw new Error('This should not succeed');
+                })
+                .catch(e => {
+                    expect(e).to.exist;
+                    expect(e.message).to.contain('Unknown error');
+                });
         });
     });
 });
