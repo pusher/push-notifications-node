@@ -1,7 +1,7 @@
 const https = require('https');
 
 const SDK_VERSION = '0.10.2';
-const INTERESTS_REGEX = new RegExp('^(_|\\-|=|@|,|\\.|:|[A-Z]|[a-z]|[0-9])*$');
+const INTERESTS_REGEX = new RegExp('^(_|\\-|=|@|,|\\.|;|[A-Z]|[a-z]|[0-9])*$');
 const INTEREST_STRING_MAX_LENGTH = 164;
 const INTEREST_ARRAY_MAX_LENGTH = 100;
 
