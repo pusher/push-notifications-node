@@ -188,6 +188,10 @@ describe('PushNotifications Node SDK', () => {
             expect(() =>
                 pn.publish(['good-interest', 'bad|interest'], {})
             ).to.throw('contains a forbidden character');
+
+            expect(() =>
+                pn.publish(['good-interest', 'bad:interest'], {})
+            ).to.throw('contains a forbidden character');
         });
 
         it('should reject the returned promise on network error', () => {
