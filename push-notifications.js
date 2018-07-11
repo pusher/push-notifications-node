@@ -71,7 +71,7 @@ PushNotifications.prototype.publish = function(interests, publishRequest) {
             throw new Error(
                 `interest "${interest}" contains a forbidden character. ` +
                     'Allowed characters are: ASCII upper/lower-case letters, ' +
-                    'numbers or one of _-=@,.:'
+                    'numbers or one of _-=@,.;'
             );
         }
     }
