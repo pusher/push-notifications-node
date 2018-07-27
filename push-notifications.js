@@ -6,7 +6,7 @@ const INTEREST_STRING_MAX_LENGTH = 164;
 const INTEREST_ARRAY_MAX_LENGTH = 100;
 
 function PushNotifications(options) {
-    if (typeof options !== 'object') {
+    if (options === null || typeof options !== 'object') {
         throw new Error('PushNotifications options object is required');
     }
     if (!options.hasOwnProperty('instanceId')) {
@@ -36,42 +36,54 @@ function PushNotifications(options) {
 }
 
 PushNotifications.prototype.publish = function(interests, publishRequest) {
-    if (interests === undefined) {
-        throw new Error('interests argument is required');
+    if (interests === undefined || interests === null) {
+        return Promise.reject(new Error('interests argument is required'));
     }
     if (!(interests instanceof Array)) {
-        throw new Error('interests argument is must be an array');
+        return Promise.reject(
+            new Error('interests argument is must be an array')
+        );
     }
     if (interests.length < 1) {
-        throw new Error(
-            'Publish requests must target at least one interest to be delivered.'
+        return Promise.reject(
+            new Error(
+                'Publish requests must target at least one interest to be delivered'
+            )
         );
     }
     if (interests.length > INTEREST_ARRAY_MAX_LENGTH) {
-        throw new Error(
-            `Number of interests (${
-                interests.length
-            }) exceeds maximum of ${INTEREST_ARRAY_MAX_LENGTH}.`
+        return Promise.reject(
+            new Error(
+                `Number of interests (${
+                    interests.length
+                }) exceeds maximum of ${INTEREST_ARRAY_MAX_LENGTH}.`
+            )
         );
     }
-    if (publishRequest === undefined) {
-        throw new Error('publishRequest argument is required');
+    if (publishRequest === undefined || publishRequest === null) {
+        return Promise.reject(new Error('publishRequest argument is required'));
     }
     for (const interest of interests) {
         if (typeof interest !== 'string') {
-            throw new Error(`interest ${interest} is not a string`);
-        }
-        if (interest.length > INTEREST_STRING_MAX_LENGTH) {
-            throw new Error(
-                `interest ${interest} is longer than the maximum of ` +
-                    `${INTEREST_STRING_MAX_LENGTH} characters`
+            return Promise.reject(
+                new Error(`interest ${interest} is not a string`)
             );
         }
-        if (!INTERESTS_REGEX.exec(interest)) {
-            throw new Error(
-                `interest "${interest}" contains a forbidden character. ` +
-                    'Allowed characters are: ASCII upper/lower-case letters, ' +
-                    'numbers or one of _-=@,.;'
+        if (interest.length > INTEREST_STRING_MAX_LENGTH) {
+            return Promise.reject(
+                new Error(
+                    `interest ${interest} is longer than the maximum of ` +
+                        `${INTEREST_STRING_MAX_LENGTH} characters`
+                )
+            );
+        }
+        if (!INTERESTS_REGEX.test(interest)) {
+            return Promise.reject(
+                new Error(
+                    `interest "${interest}" contains a forbidden character. ` +
+                        'Allowed characters are: ASCII upper/lower-case letters, ' +
+                        'numbers or one of _-=@,.;'
+                )
             );
         }
     }

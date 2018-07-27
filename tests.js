@@ -17,6 +17,9 @@ describe('PushNotifications Node SDK', () => {
             expect(() => PushNotifications()).to.throw(
                 'PushNotifications options object is required'
             );
+            expect(() => PushNotifications(null)).to.throw(
+                'PushNotifications options object is required'
+            );
         });
 
         it('should fail if no instanceId passed', () => {
@@ -132,27 +135,35 @@ describe('PushNotifications Node SDK', () => {
         });
 
         it('should fail if no interests nor publishRequest are passed', () => {
-            expect(() => pn.publish()).to.throw(
-                'interests argument is required'
-            );
+            return pn.publish().catch(error => {
+                expect(error.message).to.equal(
+                    'interests argument is required'
+                );
+            });
         });
 
         it('should fail if interests parameter passed is not an array', () => {
-            expect(() => pn.publish('donuts')).to.throw(
-                'interests argument is must be an array'
-            );
+            return pn.publish('donuts').catch(error => {
+                expect(error.message).to.equal(
+                    'interests argument is must be an array'
+                );
+            });
         });
 
         it('should fail if no publishRequest is passed', () => {
-            expect(() => pn.publish(['donuts'])).to.throw(
-                'publishRequest argument is required'
-            );
+            return pn.publish(['donuts']).catch(error => {
+                expect(error.message).to.equal(
+                    'publishRequest argument is required'
+                );
+            });
         });
 
         it('should fail if no interests are passed', () => {
-            expect(() => pn.publish([], {})).to.throw(
-                'Publish requests must target at least one interest to be delivered'
-            );
+            return pn.publish([], {}).catch(error => {
+                expect(error.message).to.equal(
+                    'Publish requests must target at least one interest to be delivered'
+                );
+            });
         });
 
         it('should fail if too many interests are passed', () => {
@@ -161,7 +172,9 @@ describe('PushNotifications Node SDK', () => {
             for (let i = 0; i < MAX_INTERESTS + 1; i++) {
                 interests.push(randomValueHex(15));
             }
-            expect(() => pn.publish(interests, {})).to.throw();
+            return pn.publish(interests, {}).catch(error => {
+                expect(error).not.to.be.undefined;
+            });
         });
 
         it('should succeed if there are 100 interests', () => {
@@ -173,25 +186,37 @@ describe('PushNotifications Node SDK', () => {
         });
 
         it('should fail if an interest is not a string', () => {
-            expect(() => pn.publish(['good_interest', false], {})).to.throw(
-                'interest false is not a string'
-            );
+            return pn.publish(['good_interest', false], {}).catch(error => {
+                expect(error.message).to.equal(
+                    'interest false is not a string'
+                );
+            });
         });
 
         it('should fail if an interest is too long', () => {
-            expect(() =>
-                pn.publish(['good_interest', 'a'.repeat(165)], {})
-            ).to.throw('is longer than the maximum of 164 characters');
+            return pn
+                .publish(['good_interest', 'a'.repeat(165)], {})
+                .catch(error => {
+                    expect(error.message).to.match(
+                        /is longer than the maximum of 164 characters/
+                    );
+                });
         });
 
         it('should fail if an interest contains invalid characters', () => {
-            expect(() =>
-                pn.publish(['good-interest', 'bad|interest'], {})
-            ).to.throw('contains a forbidden character');
-
-            expect(() =>
-                pn.publish(['good-interest', 'bad:interest'], {})
-            ).to.throw('contains a forbidden character');
+            return pn
+                .publish(['good-interest', 'bad|interest'], {})
+                .catch(error => {
+                    expect(error.message).to.match(
+                        /contains a forbidden character/
+                    );
+                    return pn.publish(['good-interest', 'bad:interest'], {});
+                })
+                .catch(error => {
+                    expect(error.message).to.match(
+                        /contains a forbidden character/
+                    );
+                });
         });
 
         it('should reject the returned promise on network error', () => {
