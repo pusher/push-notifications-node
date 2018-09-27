@@ -124,6 +124,7 @@ function doRequest(payload, options) {
                     reject(
                         new Error('Unknown error - invalid server response')
                     );
+                    return;
                 }
                 if (wasSuccessful) {
                     resolve(responseBody);
