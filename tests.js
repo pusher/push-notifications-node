@@ -259,7 +259,7 @@ describe('PushNotifications Node SDK', () => {
                 })
                 .catch(e => {
                     expect(e).to.exist;
-                    expect(e.message).to.contain('Unknown error');
+                    expect(e.message).to.contain('invalid server response');
                 });
         });
 
@@ -275,7 +275,7 @@ describe('PushNotifications Node SDK', () => {
                 })
                 .catch(e => {
                     expect(e).to.exist;
-                    expect(e.message).to.contain('Unknown error');
+                    expect(e.message).to.contain('invalid server response');
                 });
         });
     });
