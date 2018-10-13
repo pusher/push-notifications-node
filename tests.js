@@ -247,10 +247,26 @@ describe('PushNotifications Node SDK', () => {
                 });
         });
 
-        it('should reject the returned promise if response is not JSON', () => {
+        it('should reject the returned promise if response is not JSON (success)', () => {
             nock(new RegExp('/.*/'))
                 .post(new RegExp('/.*/'))
                 .reply(200, 'thisisnotjson{{{{{');
+
+            return pn
+                .publish(['donuts'], {})
+                .then(() => {
+                    throw new Error('This should not succeed');
+                })
+                .catch(e => {
+                    expect(e).to.exist;
+                    expect(e.message).to.contain('Unknown error');
+                });
+        });
+
+        it('should reject the returned promise if response is not JSON (failure)', () => {
+            nock(new RegExp('/.*/'))
+                .post(new RegExp('/.*/'))
+                .reply(500, 'thisisnotjson{{{{{');
 
             return pn
                 .publish(['donuts'], {})
