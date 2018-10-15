@@ -120,7 +120,7 @@ describe('PushNotifications Node SDK', () => {
                     'content-type': 'application/json',
                     'content-length': 55,
                     authorization: 'Bearer SECRET_KEY',
-                    'x-pusher-library': 'pusher-push-notifications-node 1.0.0',
+                    'x-pusher-library': 'pusher-push-notifications-node 1.0.1',
                     host: 'instance_id.pushnotifications.pusher.com'
                 });
                 expect(body).to.deep.equal({
