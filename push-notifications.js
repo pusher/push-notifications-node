@@ -126,6 +126,7 @@ function doRequest(payload, options) {
                     );
                     return;
                 }
+
                 if (wasSuccessful) {
                     resolve(responseBody);
                 } else {
