@@ -59,3 +59,7 @@ typings/
 
 # next.js build output
 .next
+
+# Pusher ignore
+yarn.lock
+package-lock.json
