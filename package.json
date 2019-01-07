@@ -1,29 +1,31 @@
 {
-    "name": "@pusher/push-notifications-server",
-    "version": "1.0.1",
-    "description": "NodeJS Server SDK for Pusher Push Notifications",
-    "main": "push-notifications.js",
-    "repository": "https://github.com/pusher/push-notifications-node",
-    "author": "Pusher <support@pusher.com>",
-    "license": "MIT",
-    "devDependencies": {
-        "chai": "^4.1.2",
-        "eslint": "^4.14.0",
-        "mocha": "^4.1.0",
-        "nock": "^9.1.5",
-        "prettier": "1.14.3"
-    },
-    "scripts": {
-        "ci": "prettier \"./{*.js,*.d.ts}\" -l && yarn lint && yarn test",
-        "format": "prettier \"./{*.js,*.d.ts}\" --write",
-        "lint": "./node_modules/eslint/bin/eslint.js ./*.js --env mocha",
-        "test": "mocha tests.js"
-    },
-    "keywords": [
-        "push notifications",
-        "notifications",
-        "pusher",
-        "realtime"
-    ],
-    "types": "index.d.ts"
+  "name": "@pusher/push-notifications-server",
+  "version": "1.0.1",
+  "description": "NodeJS Server SDK for Pusher Push Notifications",
+  "main": "push-notifications.js",
+  "repository": "https://github.com/pusher/push-notifications-node",
+  "author": "Pusher <support@pusher.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^4.14.0",
+    "jest": "^23.6.0",
+    "nock": "^9.1.5",
+    "prettier": "1.14.3"
+  },
+  "scripts": {
+    "ci": "prettier \"./{*.js,*.d.ts}\" -l && yarn lint && yarn test",
+    "format": "prettier \"./{*.js,*.d.ts}\" --write",
+    "lint": "./node_modules/eslint/bin/eslint.js ./*.js",
+    "test": "jest test/*.test.js"
+  },
+  "keywords": [
+    "push notifications",
+    "notifications",
+    "pusher",
+    "realtime"
+  ],
+  "types": "index.d.ts",
+  "dependencies": {
+    "jsonwebtoken": "^8.4.0"
+  }
 }

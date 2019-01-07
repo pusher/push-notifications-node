@@ -1,0 +1,38 @@
+require('jest');
+const jwt = require('jsonwebtoken');
+const PushNotifications = require('../push-notifications.js');
+const { USERS_STRING_MAX_LENGTH } = require('./utils')
+
+describe('authenticateUser', () => {
+    let pn;
+    beforeEach(() => {
+        pn = new PushNotifications({
+            instanceId: '12345',
+            secretKey: '12345'
+        });
+    });
+
+    it('should fail if no user id is provided', () => {
+        expect(() => pn.authenticateUser()).toThrow(
+            'userId argument is required'
+        );
+    });
+
+    it('should fail if the user id exceeds the permitted max length', () => {
+        expect(() => pn.authenticateUser('a'.repeat(165))).toThrow(
+            `userId is longer than the maximum length of ${USERS_STRING_MAX_LENGTH}`
+        );
+    });
+
+    it('should return a valid JWT token if everything is correct', () => {
+        const userId = 'hermione.granger@hogwarts.ac.uk';
+        const options = {
+            expiresIn: '24h',
+            issuer: `https://${pn.instanceId}.pushnotifications.pusher.com`,
+            subject: userId
+        };
+        const expected = jwt.sign({}, pn.secretKey, options);
+        const actual = pn.authenticateUser(userId);
+        expect(expected).toEqual(actual);
+    });
+});
