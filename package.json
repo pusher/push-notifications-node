@@ -16,7 +16,7 @@
     "ci": "prettier \"./{*.js,*.d.ts}\" -l && yarn lint && yarn test",
     "format": "prettier \"./{*.js,*.d.ts}\" --write",
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js",
-    "test": "jest test/*.test.js"
+    "test": "jest"
   },
   "keywords": [
     "push notifications",
@@ -26,6 +26,8 @@
   ],
   "types": "index.d.ts",
   "dependencies": {
-    "jsonwebtoken": "^8.4.0"
+    "jsonwebtoken": "^8.4.0",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5"
   }
 }

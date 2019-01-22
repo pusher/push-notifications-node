@@ -1,12 +1,13 @@
 require('jest');
 const nock = require('nock');
 const PushNotifications = require('../push-notifications.js');
-const { randomValueHex, INTEREST_ARRAY_MAX_LENGTH } = require('./utils');
+const { randomValueHex, INTEREST_ARRAY_MAX_LENGTH } = require('../utils');
 
 describe('publishToInterests', () => {
     let pn;
 
     beforeEach(function() {
+        nock.cleanAll();
         pn = new PushNotifications({
             instanceId: '1234',
             secretKey: '1234'
@@ -15,6 +16,7 @@ describe('publishToInterests', () => {
 
     afterEach(function() {
         nock.cleanAll();
+        nock.enableNetConnect()
     });
 
     it('should make the correct http request with valid params', () => {
@@ -50,16 +52,17 @@ describe('publishToInterests', () => {
                 publishId: '123456'
             });
             expect(uri).toEqual(
-                '/publish_api/v1/instances/INSTANCE_ID/publishes'
+                '/publish_api/v1/instances/INSTANCE_ID/publishes/interests'
             );
             expect(headers).toEqual({
-                'content-type': 'application/json',
-                'content-length': 55,
                 authorization: 'Bearer SECRET_KEY',
+                accept: 'application/json',
                 'x-pusher-library': 'pusher-push-notifications-node 1.0.1',
-                host: 'instance_id.pushnotifications.pusher.com'
+                host: 'instance_id.pushnotifications.pusher.com',
+                'content-type': 'application/json',
+                'content-length': 55
             });
-            expect(body).toEqual({
+            expect(JSON.parse(body)).toEqual({
                 interests: ['donuts'],
                 apns: {
                     aps: {
@@ -69,6 +72,7 @@ describe('publishToInterests', () => {
             });
         });
     });
+
     it('should work with the `publish` alias', () => {
         let uri, headers, body;
         nock(new RegExp('/.*/'))
@@ -102,16 +106,17 @@ describe('publishToInterests', () => {
                 publishId: '123456'
             });
             expect(uri).toEqual(
-                '/publish_api/v1/instances/INSTANCE_ID/publishes'
+                '/publish_api/v1/instances/INSTANCE_ID/publishes/interests'
             );
             expect(headers).toEqual({
+                accept: 'application/json',
                 'content-type': 'application/json',
                 'content-length': 55,
                 authorization: 'Bearer SECRET_KEY',
                 'x-pusher-library': 'pusher-push-notifications-node 1.0.1',
                 host: 'instance_id.pushnotifications.pusher.com'
             });
-            expect(body).toEqual({
+            expect(JSON.parse(body)).toEqual({
                 interests: ['donuts'],
                 apns: {
                     aps: {
@@ -123,9 +128,9 @@ describe('publishToInterests', () => {
     });
 
     it('should fail if no interests nor publishRequest are passed', () => {
-        return pn.publishToInterests().catch(error => {
-            expect(error.message).toEqual('interests argument is required');
-        });
+        expect(pn.publishToInterests()).rejects.toThrowError(
+            'interests argument is required'
+        );
     });
 
     it('should fail if interests parameter passed is not an array', () => {
@@ -185,28 +190,36 @@ describe('publishToInterests', () => {
         for (let i = 0; i < 100; i++) {
             interests.push(randomValueHex(15));
         }
-        return pn.publishToInterests(interests, {
-            apns: {
-                aps: {
-                    alert: 'Hi!'
-                }
-            }}).then(res => {
-            expect(uri).toEqual('/publish_api/v1/instances/1234/publishes');
-            expect(headers).toEqual({
-                'content-type': 'application/json',
-                'content-length': 1846,
-                authorization: 'Bearer 1234',
-                'x-pusher-library': 'pusher-push-notifications-node 1.0.1',
-                host: '1234.pushnotifications.pusher.com'
-            });
-            expect(body).toEqual({
-                interests, apns: {
+        return pn
+            .publishToInterests(interests, {
+                apns: {
                     aps: {
                         alert: 'Hi!'
                     }
-                } })
-            expect(res).toEqual({ publishId: '123456' });
-        });
+                }
+            })
+            .then(res => {
+                expect(uri).toEqual(
+                    '/publish_api/v1/instances/1234/publishes/interests'
+                );
+                expect(headers).toEqual({
+                    accept: 'application/json',
+                    'content-type': 'application/json',
+                    'content-length': 1846,
+                    authorization: 'Bearer 1234',
+                    'x-pusher-library': 'pusher-push-notifications-node 1.0.1',
+                    host: '1234.pushnotifications.pusher.com'
+                });
+                expect(JSON.parse(body)).toEqual({
+                    interests,
+                    apns: {
+                        aps: {
+                            alert: 'Hi!'
+                        }
+                    }
+                });
+                expect(res).toEqual({ publishId: '123456' });
+            });
     });
 
     it('should fail if an interest is not a string', () => {
@@ -240,12 +253,10 @@ describe('publishToInterests', () => {
     });
 
     it('should reject the returned promise on network error', () => {
-        nock.disableNetConnect();
+        nock.disableNetConnect()
+        return expect(pn.publishToInterests(['donuts'], {}))
+            .rejects.toThrowError()
 
-        return pn.publishToInterests(['donuts'], {}).catch(e => {
-            expect(e).toBeTruthy();
-            expect(e.message).toContain('Not allow net connect');
-        });
     });
 
     it('should reject the returned promise on HTTP error', () => {
@@ -256,15 +267,9 @@ describe('publishToInterests', () => {
                 description: 'A fake error.'
             });
 
-        return pn
-            .publishToInterests(['donuts'], {})
-            .then(() => {
-                throw new Error('This should not succeed');
-            })
-            .catch(e => {
-                expect(e).toBeTruthy();
-                expect(e.message).toContain('A fake error.');
-            });
+        return expect(
+            pn.publishToInterests(['donuts'], {})
+        ).rejects.toThrowError('A fake error');
     });
 
     it('should reject the returned promise if response is not JSON (success)', () => {
@@ -272,15 +277,9 @@ describe('publishToInterests', () => {
             .post(new RegExp('/.*/'))
             .reply(200, 'thisisnotjson{{{{{');
 
-        return pn
-            .publishToInterests(['donuts'], {})
-            .then(() => {
-                throw new Error('This should not succeed');
-            })
-            .catch(e => {
-                expect(e).toBeTruthy();
-                expect(e.message).toContain('invalid server response');
-            });
+        return expect(
+            pn.publishToInterests(['donuts'], {})
+        ).rejects.toThrowError('Could not parse response body');
     });
 
     it('should reject the returned promise if response is not JSON (failure)', () => {
@@ -288,14 +287,8 @@ describe('publishToInterests', () => {
             .post(new RegExp('/.*/'))
             .reply(500, 'thisisnotjson{{{{{');
 
-        return pn
-            .publishToInterests(['donuts'], {})
-            .then(() => {
-                throw new Error('This should not succeed');
-            })
-            .catch(e => {
-                expect(e).toBeTruthy();
-                expect(e.message).toContain('invalid server response');
-            });
+        return expect(
+            pn.publishToInterests(['donuts'], {})
+        ).rejects.toThrowError('Could not parse response body');
     });
 });

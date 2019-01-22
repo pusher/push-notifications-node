@@ -1,7 +1,7 @@
 require('jest');
 const nock = require('nock');
 const PushNotifications = require('../push-notifications.js');
-const { USERS_STRING_MAX_LENGTH } = require('./utils')
+const { USERS_STRING_MAX_LENGTH } = require('../utils')
 
 describe('deleteUser', () => {
     let pn;
