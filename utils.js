@@ -13,7 +13,6 @@ const USERS_STRING_MAX_LENGTH = 164;
 const USERS_ARRAY_MAX_LENGTH = 1000;
 const INTEREST_ARRAY_MAX_LENGTH = 100;
 
-
 module.exports = {
     randomValueHex,
     USERS_STRING_MAX_LENGTH,

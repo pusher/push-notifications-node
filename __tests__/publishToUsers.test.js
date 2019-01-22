@@ -72,16 +72,8 @@ describe('publishToUsers', () => {
     it('should succeed if there are 1000 interests', () => {
         nock(new RegExp('/.*/'))
             .post(new RegExp('/.*/'))
-            .reply(function (u, b) {
-                uri = u;
-                headers = this.req.headers;
-                body = b;
-                return [
-                    200,
-                    {
-                        publishId: '123456'
-                    }
-                ];
+            .reply(() => {
+                return [200,{ publishId: '123456' }];
             });
 
         let users = [];

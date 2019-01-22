@@ -47,7 +47,7 @@ function PushNotifications(options) {
             'X-Pusher-Library': `pusher-push-notifications-node ${SDK_VERSION}`
         },
         json: true,
-        simple: true, // true == default
+        simple: true,
         resolveWithFullResponse: true
     });
 }
@@ -258,8 +258,8 @@ function doRequest(options) {
                 return isValidJson(res.body)
                     ? Promise.resolve(res.body)
                     : Promise.reject(
-                        new Error('Could not parse response body')
-                    );
+                          new Error('Could not parse response body')
+                      );
             }
             return Promise.resolve();
         })

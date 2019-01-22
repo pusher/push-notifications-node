@@ -16,7 +16,7 @@ describe('publishToInterests', () => {
 
     afterEach(function() {
         nock.cleanAll();
-        nock.enableNetConnect()
+        nock.enableNetConnect();
     });
 
     it('should make the correct http request with valid params', () => {
@@ -223,21 +223,14 @@ describe('publishToInterests', () => {
     });
 
     it('should fail if an interest is not a string', () => {
-        return pn
-            .publishToInterests(['good_interest', false], {})
-            .catch(error => {
-                expect(error.message).toEqual('interest false is not a string');
-            });
+        return expect(pn.publishToInterests(['good_interest', false], {}))
+            .rejects.toThrowError('interest false is not a string');
     });
 
     it('should fail if an interest is too long', () => {
-        return pn
-            .publishToInterests(['good_interest', 'a'.repeat(165)], {})
-            .catch(error => {
-                expect(error.message).toMatch(
-                    /is longer than the maximum of 164 characters/
-                );
-            });
+        return expect(
+            pn.publishToInterests(['good_interest', 'a'.repeat(165)], {})
+        ).rejects.toThrowError(/is longer than the maximum of 164 characters/);
     });
 
     it('should fail if an interest contains invalid characters', () => {
@@ -253,10 +246,10 @@ describe('publishToInterests', () => {
     });
 
     it('should reject the returned promise on network error', () => {
-        nock.disableNetConnect()
-        return expect(pn.publishToInterests(['donuts'], {}))
-            .rejects.toThrowError()
-
+        nock.disableNetConnect();
+        return expect(
+            pn.publishToInterests(['donuts'], {})
+        ).rejects.toThrowError();
     });
 
     it('should reject the returned promise on HTTP error', () => {

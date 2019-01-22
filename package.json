@@ -15,7 +15,7 @@
   "scripts": {
     "ci": "prettier \"./{*.js,*.d.ts}\" -l && yarn lint && yarn test",
     "format": "prettier \"./{*.js,*.d.ts}\" --write",
-    "lint": "./node_modules/eslint/bin/eslint.js ./*.js",
+    "lint": "npx eslint **/*.js",
     "test": "jest"
   },
   "keywords": [
