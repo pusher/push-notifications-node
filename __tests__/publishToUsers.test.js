@@ -69,7 +69,7 @@ describe('publishToUsers', () => {
         });
     });
 
-    it('should succeed if there are 1000 interests', () => {
+    it('should succeed if there are 1000 users', () => {
         nock(new RegExp('/.*/'))
             .post(new RegExp('/.*/'))
             .reply(() => {
