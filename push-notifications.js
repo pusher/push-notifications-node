@@ -8,8 +8,6 @@ const INTEREST_ARRAY_MAX_LENGTH = 100;
 const USERS_ARRAY_MAX_LENGTH = 1000;
 const USERS_STRING_MAX_LENGTH = 164;
 
-let baseRequest;
-
 function PushNotifications(options) {
     if (options === null || typeof options !== 'object') {
         throw new Error('PushNotifications options object is required');
@@ -41,7 +39,7 @@ function PushNotifications(options) {
         this.endpoint = options.endpoint;
     }
 
-    baseRequest = request.defaults({
+    this._baseRequest = request.defaults({
         headers: {
             Authorization: `Bearer ${this.secretKey}`,
             'X-Pusher-Library': `pusher-push-notifications-node ${SDK_VERSION}`
@@ -152,7 +150,7 @@ PushNotifications.prototype.publishToInterests = function(
         }
     };
 
-    return doRequest(options);
+    return doRequest(this._baseRequest, options);
 };
 
 PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
@@ -209,7 +207,7 @@ PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
         }
     };
 
-    return doRequest(options);
+    return doRequest(this._baseRequest, options);
 };
 
 PushNotifications.prototype.deleteUser = function(userId) {
@@ -230,7 +228,7 @@ PushNotifications.prototype.deleteUser = function(userId) {
         method: 'DELETE'
     };
 
-    return doRequest(options);
+    return doRequest(this._baseRequest, options);
 };
 
 function isJsonString(str) {
@@ -251,7 +249,7 @@ function isValidJson(value) {
     return false;
 }
 
-function doRequest(options) {
+function doRequest(baseRequest, options) {
     return baseRequest(options)
         .then(res => {
             if (res.body) {
