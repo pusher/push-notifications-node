@@ -63,3 +63,4 @@ typings/
 # Pusher ignore
 yarn.lock
 package-lock.json
+tsconfig.json

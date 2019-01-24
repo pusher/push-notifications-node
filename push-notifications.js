@@ -258,36 +258,45 @@ function doRequest(options) {
                 return isValidJson(res.body)
                     ? Promise.resolve(res.body)
                     : Promise.reject(
-                          new Error('Could not parse response body')
-                      );
+                        new Error('Could not parse response body')
+                    );
             }
             return Promise.resolve();
         })
         .catch(err => {
-            if (err.name === 'RequestError' || err.name === 'TransformError') {
-                return Promise.reject(err.error);
-            }
             if (err.name === 'StatusCodeError') {
-                if (
-                    err.error.hasOwnProperty('error') &&
-                    err.error.hasOwnProperty('description')
-                ) {
-                    return Promise.reject(
-                        new Error(
-                            `${err.statusCode} ${err.error.error} - ${
-                                err.error.description
-                            }`
-                        )
-                    );
+                let errorMessage;
+                let failureMessage = 'Could not parse response body';
+                try {
+                    errorMessage =
+                        typeof err.error === 'object'
+                            ? err.error
+                            : JSON.parse(err.error);
+                } catch (e) {
+                    return Promise.reject(new Error(failureMessage));
                 }
+                if (
+                    !(
+                        errorMessage.hasOwnProperty('error') &&
+                        errorMessage.hasOwnProperty('description')
+                    )
+                ) {
+                    return Promise.reject(new Error(failureMessage));
+                }
+
+                return Promise.reject(
+                    new Error(
+                        `${err.statusCode} ${err.error.error} - ${
+                            err.error.description
+                        }`
+                    )
+                );
             }
 
             if (err instanceof Error) {
-                const errorMessage = isValidJson(err.error)
-                    ? err.error
-                    : 'Could not parse response body';
-                return Promise.reject(new Error(errorMessage));
+                return Promise.reject(err);
             }
+            return Promise.reject(new Error(err));
         });
 }
 

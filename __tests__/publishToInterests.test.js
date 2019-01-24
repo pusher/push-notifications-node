@@ -128,33 +128,27 @@ describe('publishToInterests', () => {
     });
 
     it('should fail if no interests nor publishRequest are passed', () => {
-        expect(pn.publishToInterests()).rejects.toThrowError(
+        return expect(pn.publishToInterests()).rejects.toThrowError(
             'interests argument is required'
         );
     });
 
     it('should fail if interests parameter passed is not an array', () => {
-        return pn.publishToInterests('donuts').catch(error => {
-            expect(error.message).toEqual(
-                'interests argument is must be an array'
-            );
-        });
+        return expect(pn.publishToInterests('donuts')).rejects.toThrowError(
+            'interests argument is must be an array'
+        );
     });
 
     it('should fail if no publishRequest is passed', () => {
-        return pn.publishToInterests(['donuts']).catch(error => {
-            expect(error.message).toEqual(
-                'publishRequest argument is required'
-            );
-        });
+        return expect(pn.publishToInterests(['donuts'])).rejects.toThrowError(
+            'publishRequest argument is required'
+        );
     });
 
     it('should fail if no interests are passed', () => {
-        return pn.publishToInterests([], {}).catch(error => {
-            expect(error.message).toEqual(
-                'Publish requests must target at least one interest to be delivered'
-            );
-        });
+        return expect(pn.publishToInterests([], {})).rejects.toThrowError(
+            'Publish requests must target at least one interest to be delivered'
+        );
     });
 
     it('should fail if too many interests are passed', () => {
@@ -223,8 +217,9 @@ describe('publishToInterests', () => {
     });
 
     it('should fail if an interest is not a string', () => {
-        return expect(pn.publishToInterests(['good_interest', false], {}))
-            .rejects.toThrowError('interest false is not a string');
+        return expect(
+            pn.publishToInterests(['good_interest', false], {})
+        ).rejects.toThrowError('interest false is not a string');
     });
 
     it('should fail if an interest is too long', () => {
@@ -280,8 +275,18 @@ describe('publishToInterests', () => {
             .post(new RegExp('/.*/'))
             .reply(500, 'thisisnotjson{{{{{');
 
-        return expect(
-            pn.publishToInterests(['donuts'], {})
-        ).rejects.toThrowError('Could not parse response body');
+        return pn.publishToInterests(['donuts'], {}).catch(e => {
+            expect(e).toEqual(new Error('Could not parse response body'));
+        });
+    });
+
+    it('should reject the returned promise if error response has an unexpected schema', () => {
+        nock(new RegExp('/.*/'))
+            .post(new RegExp('/.*/'))
+            .reply(500, { notError: 'nope', noDescription: 'here' });
+
+        return pn.publishToInterests(['donuts'], {}).catch(e => {
+            expect(e).toEqual(new Error('Could not parse response body'));
+        });
     });
 });
