@@ -3,10 +3,12 @@ const jwt = require('jsonwebtoken');
 
 const SDK_VERSION = '1.0.1';
 const INTERESTS_REGEX = new RegExp('^(_|\\-|=|@|,|\\.|;|[A-Z]|[a-z]|[0-9])*$');
-const INTEREST_STRING_MAX_LENGTH = 164;
-const INTEREST_ARRAY_MAX_LENGTH = 100;
-const USERS_ARRAY_MAX_LENGTH = 1000;
-const USERS_STRING_MAX_LENGTH = 164;
+const {
+    INTEREST_STRING_MAX_LENGTH,
+    INTEREST_ARRAY_MAX_LENGTH,
+    USERS_ARRAY_MAX_LENGTH,
+    USERS_STRING_MAX_LENGTH
+} = require('./utils');
 
 function PushNotifications(options) {
     if (options === null || typeof options !== 'object') {
