@@ -1,9 +1,14 @@
-const https = require('https');
+const request = require('request-promise-native');
+const jwt = require('jsonwebtoken');
 
 const SDK_VERSION = '1.0.1';
 const INTERESTS_REGEX = new RegExp('^(_|\\-|=|@|,|\\.|;|[A-Z]|[a-z]|[0-9])*$');
-const INTEREST_STRING_MAX_LENGTH = 164;
-const INTEREST_ARRAY_MAX_LENGTH = 100;
+const {
+    INTEREST_STRING_MAX_LENGTH,
+    INTEREST_ARRAY_MAX_LENGTH,
+    USERS_ARRAY_MAX_LENGTH,
+    USERS_STRING_MAX_LENGTH
+} = require('./utils');
 
 function PushNotifications(options) {
     if (options === null || typeof options !== 'object') {
@@ -27,15 +32,60 @@ function PushNotifications(options) {
     this.secretKey = options.secretKey;
 
     if (!options.hasOwnProperty('endpoint')) {
+        this.protocol = 'https';
         this.endpoint = `${this.instanceId}.pushnotifications.pusher.com`;
     } else if (typeof options.endpoint !== 'string') {
         throw new Error('endpoint must be a string');
     } else {
+        this.protocol = 'http';
         this.endpoint = options.endpoint;
     }
+
+    this._baseRequest = request.defaults({
+        headers: {
+            Authorization: `Bearer ${this.secretKey}`,
+            'X-Pusher-Library': `pusher-push-notifications-node ${SDK_VERSION}`
+        },
+        json: true,
+        simple: true,
+        resolveWithFullResponse: true
+    });
 }
 
+/**
+ * Alias of publishToInterests
+ * @deprecated Use publishToInterests instead
+ */
+
 PushNotifications.prototype.publish = function(interests, publishRequest) {
+    console.warn('`publish` is deprecated. Use `publishToInterests` instead.');
+    return this.publishToInterests(interests, publishRequest);
+};
+
+PushNotifications.prototype.authenticateUser = function(userId) {
+    if (userId === undefined || userId === null) {
+        throw new Error('userId argument is required');
+    }
+    if (userId === '') {
+        throw new Error('userId cannot be the empty string');
+    }
+    if (userId.length > USERS_STRING_MAX_LENGTH) {
+        throw new Error(
+            `userId is longer than the maximum length of ${USERS_STRING_MAX_LENGTH}`
+        );
+    }
+    const options = {
+        expiresIn: '24h',
+        issuer: `https://${this.instanceId}.pushnotifications.pusher.com`,
+        subject: userId
+    };
+    return jwt.sign({}, this.secretKey, options);
+};
+
+PushNotifications.prototype.publishToInterests = function(
+    interests,
+    publishRequest
+) {
     if (interests === undefined || interests === null) {
         return Promise.reject(new Error('interests argument is required'));
     }
@@ -89,64 +139,165 @@ PushNotifications.prototype.publish = function(interests, publishRequest) {
     }
 
     publishRequest.interests = interests;
-    const payload = JSON.stringify(publishRequest);
+    const body = JSON.stringify(publishRequest);
     const options = {
-        host: this.endpoint,
-        path: `/publish_api/v1/instances/${this.instanceId}/publishes`,
-        port: 443,
+        uri: `${this.protocol}://${this.endpoint}/publish_api/v1/instances/${
+            this.instanceId
+        }/publishes/interests`,
         method: 'POST',
+        body,
         headers: {
             'Content-Type': 'application/json',
-            'Content-Length': Buffer.byteLength(payload),
-            Authorization: `Bearer ${this.secretKey}`,
-            'X-Pusher-Library': `pusher-push-notifications-node ${SDK_VERSION}`
+            'Content-Length': Buffer.byteLength(body)
         }
     };
 
-    return doRequest(payload, options);
+    return doRequest(this._baseRequest, options);
 };
 
-function doRequest(payload, options) {
-    const promise = new Promise((resolve, reject) => {
-        const request = https.request(options, response => {
-            const wasSuccessful = response.statusCode === 200;
-            let responseString = '';
-            response.setEncoding('utf8');
+PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
+    if (users === undefined || users === null) {
+        return Promise.reject(new Error('users argument is required'));
+    }
+    if (!(users instanceof Array)) {
+        return Promise.reject(new Error('users argument is must be an array'));
+    }
+    if (users.length < 1) {
+        return Promise.reject(
+            new Error(
+                'Publish requests must target at least one interest to be delivered'
+            )
+        );
+    }
+    if (users.length > USERS_ARRAY_MAX_LENGTH) {
+        return Promise.reject(
+            new Error(
+                `Number of users (${
+                    users.length
+                }) exceeds maximum of ${USERS_ARRAY_MAX_LENGTH}.`
+            )
+        );
+    }
+    if (publishRequest === undefined || publishRequest === null) {
+        return Promise.reject(new Error('publishRequest argument is required'));
+    }
+    for (const user of users) {
+        if (typeof user !== 'string') {
+            return Promise.reject(new Error(`user ${user} is not a string`));
+        }
+        if (user.length > INTEREST_STRING_MAX_LENGTH) {
+            return Promise.reject(
+                new Error(
+                    `user ${user} is longer than the maximum of ` +
+                        `${INTEREST_STRING_MAX_LENGTH} characters`
+                )
+            );
+        }
+    }
 
-            response.on('data', function(chunk) {
-                responseString += chunk;
-            });
-            response.on('end', function() {
-                let responseBody;
+    publishRequest.users = users;
+    const body = JSON.stringify(publishRequest);
+    const options = {
+        uri: `${this.protocol}://${this.endpoint}/publish_api/v1/instances/${
+            this.instanceId
+        }/publishes/users`,
+        method: 'POST',
+        body,
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(body)
+        }
+    };
+
+    return doRequest(this._baseRequest, options);
+};
+
+PushNotifications.prototype.deleteUser = function(userId) {
+    if (userId === undefined || userId === null) {
+        return Promise.reject(new Error('User ID argument is required'));
+    }
+    if (typeof userId !== 'string') {
+        return Promise.reject(new Error('User ID argument must be a string'));
+    }
+    if (userId.length > USERS_STRING_MAX_LENGTH) {
+        return Promise.reject(new Error('User ID argument is too long'));
+    }
+
+    const options = {
+        uri: `${this.protocol}://${this.endpoint}/user_api/v1/instances/${
+            this.instanceId
+        }/users/${encodeURIComponent(userId)}`,
+        method: 'DELETE'
+    };
+
+    return doRequest(this._baseRequest, options);
+};
+
+function isJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+function isValidJson(value) {
+    if (typeof value === 'object' || typeof value === 'number') {
+        return true;
+    }
+    if (typeof value === 'string') {
+        return isJsonString(value);
+    }
+    return false;
+}
+
+function doRequest(baseRequest, options) {
+    return baseRequest(options)
+        .then(res => {
+            if (res.body) {
+                return isValidJson(res.body)
+                    ? Promise.resolve(res.body)
+                    : Promise.reject(
+                          new Error('Could not parse response body')
+                      );
+            }
+            return Promise.resolve();
+        })
+        .catch(err => {
+            if (err.name === 'StatusCodeError') {
+                let errorMessage;
+                let failureMessage = 'Could not parse response body';
                 try {
-                    responseBody = JSON.parse(responseString);
-                } catch (_) {
-                    reject(
-                        new Error('Unknown error - invalid server response')
-                    );
-                    return;
+                    errorMessage =
+                        typeof err.error === 'object'
+                            ? err.error
+                            : JSON.parse(err.error);
+                } catch (e) {
+                    return Promise.reject(new Error(failureMessage));
+                }
+                if (
+                    !(
+                        errorMessage.hasOwnProperty('error') &&
+                        errorMessage.hasOwnProperty('description')
+                    )
+                ) {
+                    return Promise.reject(new Error(failureMessage));
                 }
 
-                if (wasSuccessful) {
-                    resolve(responseBody);
-                } else {
-                    const errorType = responseBody.error || 'Unknown error';
-                    const errorDescription =
-                        responseBody.description || 'No description';
-                    const errorString = `${errorType}:${errorDescription}`;
-                    reject(new Error(errorString));
-                }
-            });
-        });
-        request.on('error', function(error) {
-            reject(error);
-        });
+                return Promise.reject(
+                    new Error(
+                        `${err.statusCode} ${err.error.error} - ${
+                            err.error.description
+                        }`
+                    )
+                );
+            }
 
-        request.write(payload);
-        request.end();
-    });
-
-    return promise;
+            if (err instanceof Error) {
+                return Promise.reject(err);
+            }
+            return Promise.reject(new Error(err));
+        });
 }
 
 module.exports = PushNotifications;
