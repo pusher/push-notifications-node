@@ -1,12 +1,14 @@
-const https = require('https');
+const request = require('request-promise-native');
 const jwt = require('jsonwebtoken');
 
 const SDK_VERSION = '1.0.1';
 const INTERESTS_REGEX = new RegExp('^(_|\\-|=|@|,|\\.|;|[A-Z]|[a-z]|[0-9])*$');
-const INTEREST_STRING_MAX_LENGTH = 164;
-const INTEREST_ARRAY_MAX_LENGTH = 100;
-const USERS_ARRAY_MAX_LENGTH = 1000;
-const USERS_STRING_MAX_LENGTH = 164;
+const {
+    INTEREST_STRING_MAX_LENGTH,
+    INTEREST_ARRAY_MAX_LENGTH,
+    USERS_ARRAY_MAX_LENGTH,
+    USERS_STRING_MAX_LENGTH
+} = require('./utils');
 
 function PushNotifications(options) {
     if (options === null || typeof options !== 'object') {
@@ -30,22 +32,42 @@ function PushNotifications(options) {
     this.secretKey = options.secretKey;
 
     if (!options.hasOwnProperty('endpoint')) {
+        this.protocol = 'https';
         this.endpoint = `${this.instanceId}.pushnotifications.pusher.com`;
     } else if (typeof options.endpoint !== 'string') {
         throw new Error('endpoint must be a string');
     } else {
+        this.protocol = 'http';
         this.endpoint = options.endpoint;
     }
+
+    this._baseRequest = request.defaults({
+        headers: {
+            Authorization: `Bearer ${this.secretKey}`,
+            'X-Pusher-Library': `pusher-push-notifications-node ${SDK_VERSION}`
+        },
+        json: true,
+        simple: true,
+        resolveWithFullResponse: true
+    });
 }
 
-// Alias of publishToInterests
+/**
+ * Alias of publishToInterests
+ * @deprecated Use publishToInterests instead
+ */
+
 PushNotifications.prototype.publish = function(interests, publishRequest) {
+    console.warn('`publish` is deprecated. Use `publishToInterests` instead.');
     return this.publishToInterests(interests, publishRequest);
 };
 
 PushNotifications.prototype.generateToken = function(userId) {
     if (userId === undefined || userId === null) {
         throw new Error('userId argument is required');
+    }
+    if (userId === '') {
+        throw new Error('userId cannot be the empty string');
     }
     if (userId.length > USERS_STRING_MAX_LENGTH) {
         throw new Error(
@@ -117,21 +139,20 @@ PushNotifications.prototype.publishToInterests = function(
     }
 
     publishRequest.interests = interests;
-    const payload = JSON.stringify(publishRequest);
+    const body = JSON.stringify(publishRequest);
     const options = {
-        host: this.endpoint,
-        path: `/publish_api/v1/instances/${this.instanceId}/publishes`,
-        port: 443,
+        uri: `${this.protocol}://${this.endpoint}/publish_api/v1/instances/${
+            this.instanceId
+        }/publishes/interests`,
         method: 'POST',
+        body,
         headers: {
             'Content-Type': 'application/json',
-            'Content-Length': Buffer.byteLength(payload),
-            Authorization: `Bearer ${this.secretKey}`,
-            'X-Pusher-Library': `pusher-push-notifications-node ${SDK_VERSION}`
+            'Content-Length': Buffer.byteLength(body)
         }
     };
 
-    return doRequest(payload, options);
+    return doRequest(this._baseRequest, options);
 };
 
 PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
@@ -175,92 +196,108 @@ PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
     }
 
     publishRequest.users = users;
-    const payload = JSON.stringify(publishRequest);
+    const body = JSON.stringify(publishRequest);
     const options = {
-        host: this.endpoint,
-        path: `/publish_api/v1/instances/${this.instanceId}/users`,
-        port: 443,
+        uri: `${this.protocol}://${this.endpoint}/publish_api/v1/instances/${
+            this.instanceId
+        }/publishes/users`,
         method: 'POST',
+        body,
         headers: {
             'Content-Type': 'application/json',
-            'Content-Length': Buffer.byteLength(payload),
-            Authorization: `Bearer ${this.secretKey}`,
-            'X-Pusher-Library': `pusher-push-notifications-node ${SDK_VERSION}`
+            'Content-Length': Buffer.byteLength(body)
         }
     };
 
-    return doRequest(payload, options);
+    return doRequest(this._baseRequest, options);
 };
 
 PushNotifications.prototype.deleteUser = function(userId) {
     if (userId === undefined || userId === null) {
         return Promise.reject(new Error('User ID argument is required'));
     }
+    if (typeof userId !== 'string') {
+        return Promise.reject(new Error('User ID argument must be a string'));
+    }
     if (userId.length > USERS_STRING_MAX_LENGTH) {
         return Promise.reject(new Error('User ID argument is too long'));
     }
 
     const options = {
-        host: this.endpoint,
-        path: `user_api/v1/instances/${
+        uri: `${this.protocol}://${this.endpoint}/user_api/v1/instances/${
             this.instanceId
         }/users/${encodeURIComponent(userId)}`,
-        port: 443,
-        method: 'DELETE',
-        headers: {
-            Authorization: `Bearer ${this.secretKey}`,
-            'X-Pusher-Library': `pusher-push-notifications-node ${SDK_VERSION}`
-        }
+        method: 'DELETE'
     };
 
-    return doRequest(undefined, options);
+    return doRequest(this._baseRequest, options);
 };
 
-function doRequest(payload, options) {
-    return new Promise((resolve, reject) => {
-        const request = https.request(options, response => {
-            const wasSuccessful = response.statusCode === 200;
-            let responseString = '';
-            response.setEncoding('utf8');
+function isJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+function isValidJson(value) {
+    if (typeof value === 'object' || typeof value === 'number') {
+        return true;
+    }
+    if (typeof value === 'string') {
+        return isJsonString(value);
+    }
+    return false;
+}
 
-            response.on('data', function(chunk) {
-                responseString += chunk;
-            });
-            response.on('error', function() {
-                reject(new Error('Unknown error - invalid server response'));
-            });
-            response.on('end', function() {
-                let responseBody;
+function doRequest(baseRequest, options) {
+    return baseRequest(options)
+        .then(res => {
+            if (res.body) {
+                return isValidJson(res.body)
+                    ? Promise.resolve(res.body)
+                    : Promise.reject(
+                          new Error('Could not parse response body')
+                      );
+            }
+            return Promise.resolve();
+        })
+        .catch(err => {
+            if (err.name === 'StatusCodeError') {
+                let errorMessage;
+                let failureMessage = 'Could not parse response body';
                 try {
-                    if (responseString.length > 0) {
-                        responseBody = JSON.parse(responseString);
-                    }
+                    errorMessage =
+                        typeof err.error === 'object'
+                            ? err.error
+                            : JSON.parse(err.error);
                 } catch (e) {
-                    return reject(
-                        new Error('Unknown error - invalid server response')
-                    );
+                    return Promise.reject(new Error(failureMessage));
+                }
+                if (
+                    !(
+                        errorMessage.hasOwnProperty('error') &&
+                        errorMessage.hasOwnProperty('description')
+                    )
+                ) {
+                    return Promise.reject(new Error(failureMessage));
                 }
 
-                if (wasSuccessful) {
-                    resolve(responseBody);
-                } else {
-                    const errorType = responseBody.error || 'Unknown error';
-                    const errorDescription =
-                        responseBody.description || 'No description';
-                    const errorString = `${errorType}:${errorDescription}`;
-                    reject(new Error(errorString));
-                }
-            });
-        });
-        request.on('error', function(error) {
-            reject(error);
-        });
+                return Promise.reject(
+                    new Error(
+                        `${err.statusCode} ${err.error.error} - ${
+                            err.error.description
+                        }`
+                    )
+                );
+            }
 
-        if (payload) {
-            request.write(payload);
-        }
-        request.end();
-    });
+            if (err instanceof Error) {
+                return Promise.reject(err);
+            }
+            return Promise.reject(new Error(err));
+        });
 }
 
 module.exports = PushNotifications;
