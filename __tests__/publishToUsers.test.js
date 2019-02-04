@@ -1,7 +1,7 @@
 require('jest');
 const nock = require('nock');
 const PushNotifications = require('../push-notifications.js');
-const { randomValueHex, USERS_ARRAY_MAX_LENGTH } = require('./utils');
+const { randomValueHex, USERS_ARRAY_MAX_LENGTH } = require('../utils');
 
 describe('publishToUsers', () => {
     let pn;
@@ -49,15 +49,16 @@ describe('publishToUsers', () => {
             expect(data).toEqual({
                 publishId: '123456'
             });
-            expect(uri).toEqual('/publish_api/v1/instances/INSTANCE_ID/users');
+            expect(uri).toEqual('/publish_api/v1/instances/INSTANCE_ID/publishes/users');
             expect(headers).toEqual({
+                accept: 'application/json',
                 'content-type': 'application/json',
                 'content-length': 72,
                 authorization: 'Bearer SECRET_KEY',
                 'x-pusher-library': 'pusher-push-notifications-node 1.0.1',
                 host: 'instance_id.pushnotifications.pusher.com'
             });
-            expect(body).toEqual({
+            expect(JSON.parse(body)).toEqual({
                 users: ['harry.potter@hogwarts.ac.uk'],
                 apns: {
                     aps: {
@@ -68,19 +69,11 @@ describe('publishToUsers', () => {
         });
     });
 
-    it('should succeed if there are 1000 interests', () => {
+    it('should succeed if there are 1000 users', () => {
         nock(new RegExp('/.*/'))
             .post(new RegExp('/.*/'))
-            .reply(function (u, b) {
-                uri = u;
-                headers = this.req.headers;
-                body = b;
-                return [
-                    200,
-                    {
-                        publishId: '123456'
-                    }
-                ];
+            .reply(() => {
+                return [200,{ publishId: '123456' }];
             });
 
         let users = [];
