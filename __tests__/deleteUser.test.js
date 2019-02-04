@@ -1,7 +1,7 @@
 require('jest');
 const nock = require('nock');
 const PushNotifications = require('../push-notifications.js');
-const { USERS_STRING_MAX_LENGTH } = require('./utils')
+const { USERS_STRING_MAX_LENGTH } = require('../utils');
 
 describe('deleteUser', () => {
     let pn;
@@ -18,7 +18,6 @@ describe('deleteUser', () => {
     });
 
     it('should make the correct http request with valid params (no response body)', () => {
-        let uri, headers, body;
         nock(new RegExp('/.*/'))
             .delete(new RegExp('/.*/'))
             .reply(200);
@@ -28,10 +27,9 @@ describe('deleteUser', () => {
     });
 
     it('should make the correct http request with valid params (with response body)', () => {
-        let uri, headers, body;
         nock(new RegExp('/.*/'))
             .delete(new RegExp('/.*/'))
-            .reply(function(u, b) {
+            .reply(() => {
                 return [200, JSON.stringify({ statusCode: 200 })];
             });
 

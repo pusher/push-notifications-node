@@ -1,7 +1,7 @@
 require('jest');
 const jwt = require('jsonwebtoken');
 const PushNotifications = require('../push-notifications.js');
-const { USERS_STRING_MAX_LENGTH } = require('./utils');
+const { USERS_STRING_MAX_LENGTH } = require('../utils');
 
 describe('generateToken', () => {
     let pn;
@@ -14,6 +14,12 @@ describe('generateToken', () => {
 
     it('should fail if no user id is provided', () => {
         expect(() => pn.generateToken()).toThrow('userId argument is required');
+    });
+
+    it('should fail if no user id is the empty string', () => {
+        expect(() => pn.generateToken('')).toThrow(
+            'userId cannot be the empty string'
+        );
     });
 
     it('should fail if the user id exceeds the permitted max length', () => {
