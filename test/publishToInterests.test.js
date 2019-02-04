@@ -50,7 +50,7 @@ describe('publishToInterests', () => {
                 publishId: '123456'
             });
             expect(uri).toEqual(
-                '/publish_api/v1/instances/INSTANCE_ID/publishes'
+                '/publish_api/v1/instances/INSTANCE_ID/publishes/interests'
             );
             expect(headers).toEqual({
                 'content-type': 'application/json',
@@ -102,7 +102,7 @@ describe('publishToInterests', () => {
                 publishId: '123456'
             });
             expect(uri).toEqual(
-                '/publish_api/v1/instances/INSTANCE_ID/publishes'
+                '/publish_api/v1/instances/INSTANCE_ID/publishes/interests'
             );
             expect(headers).toEqual({
                 'content-type': 'application/json',
@@ -185,28 +185,35 @@ describe('publishToInterests', () => {
         for (let i = 0; i < 100; i++) {
             interests.push(randomValueHex(15));
         }
-        return pn.publishToInterests(interests, {
-            apns: {
-                aps: {
-                    alert: 'Hi!'
-                }
-            }}).then(res => {
-            expect(uri).toEqual('/publish_api/v1/instances/1234/publishes');
-            expect(headers).toEqual({
-                'content-type': 'application/json',
-                'content-length': 1846,
-                authorization: 'Bearer 1234',
-                'x-pusher-library': 'pusher-push-notifications-node 1.0.1',
-                host: '1234.pushnotifications.pusher.com'
-            });
-            expect(body).toEqual({
-                interests, apns: {
+        return pn
+            .publishToInterests(interests, {
+                apns: {
                     aps: {
                         alert: 'Hi!'
                     }
-                } })
-            expect(res).toEqual({ publishId: '123456' });
-        });
+                }
+            })
+            .then(res => {
+                expect(uri).toEqual(
+                    '/publish_api/v1/instances/1234/publishes/interests'
+                );
+                expect(headers).toEqual({
+                    'content-type': 'application/json',
+                    'content-length': 1846,
+                    authorization: 'Bearer 1234',
+                    'x-pusher-library': 'pusher-push-notifications-node 1.0.1',
+                    host: '1234.pushnotifications.pusher.com'
+                });
+                expect(body).toEqual({
+                    interests,
+                    apns: {
+                        aps: {
+                            alert: 'Hi!'
+                        }
+                    }
+                });
+                expect(res).toEqual({ publishId: '123456' });
+            });
     });
 
     it('should fail if an interest is not a string', () => {

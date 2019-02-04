@@ -120,7 +120,9 @@ PushNotifications.prototype.publishToInterests = function(
     const payload = JSON.stringify(publishRequest);
     const options = {
         host: this.endpoint,
-        path: `/publish_api/v1/instances/${this.instanceId}/publishes`,
+        path: `/publish_api/v1/instances/${
+            this.instanceId
+        }/publishes/interests`,
         port: 443,
         method: 'POST',
         headers: {
@@ -178,7 +180,7 @@ PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
     const payload = JSON.stringify(publishRequest);
     const options = {
         host: this.endpoint,
-        path: `/publish_api/v1/instances/${this.instanceId}/users`,
+        path: `/publish_api/v1/instances/${this.instanceId}/publishes/users`,
         port: 443,
         method: 'POST',
         headers: {

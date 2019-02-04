@@ -49,7 +49,9 @@ describe('publishToUsers', () => {
             expect(data).toEqual({
                 publishId: '123456'
             });
-            expect(uri).toEqual('/publish_api/v1/instances/INSTANCE_ID/users');
+            expect(uri).toEqual(
+                '/publish_api/v1/instances/INSTANCE_ID/publishes/users'
+            );
             expect(headers).toEqual({
                 'content-type': 'application/json',
                 'content-length': 72,
@@ -71,7 +73,7 @@ describe('publishToUsers', () => {
     it('should succeed if there are 1000 interests', () => {
         nock(new RegExp('/.*/'))
             .post(new RegExp('/.*/'))
-            .reply(function (u, b) {
+            .reply(function(u, b) {
                 uri = u;
                 headers = this.req.headers;
                 body = b;
