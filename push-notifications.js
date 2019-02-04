@@ -258,8 +258,8 @@ function doRequest(baseRequest, options) {
                 return isValidJson(res.body)
                     ? Promise.resolve(res.body)
                     : Promise.reject(
-                          new Error('Could not parse response body')
-                      );
+                        new Error('Could not parse response body')
+                    );
             }
             return Promise.resolve();
         })
