@@ -255,11 +255,10 @@ function doRequest(baseRequest, options) {
     return baseRequest(options)
         .then(res => {
             if (res.body) {
+                const err = new Error('Could not parse response body');
                 return isValidJson(res.body)
                     ? Promise.resolve(res.body)
-                    : Promise.reject(
-                          new Error('Could not parse response body')
-                      );
+                    : Promise.reject(err);
             }
             return Promise.resolve();
         })

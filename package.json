@@ -8,12 +8,13 @@
   "license": "MIT",
   "devDependencies": {
     "eslint": "^4.14.0",
+    "eslint-config-prettier": "^4.0.0",
     "jest": "^23.6.0",
     "nock": "^9.1.5",
     "prettier": "1.14.3"
   },
   "scripts": {
-    "ci": "prettier \"./{*.js,*.d.ts}\" -l && yarn lint && yarn test",
+    "ci": "npx prettier \"./{*.js,*.d.ts}\" -l && yarn lint && yarn test",
     "format": "prettier \"./{*.js,*.d.ts}\" --write",
     "lint": "npx eslint **/*.js",
     "test": "jest"
