@@ -43,7 +43,7 @@ PushNotifications.prototype.publish = function(interests, publishRequest) {
     return this.publishToInterests(interests, publishRequest);
 };
 
-PushNotifications.prototype.authenticateUser = function(userId) {
+PushNotifications.prototype.generateToken = function(userId) {
     if (userId === undefined || userId === null) {
         throw new Error('userId argument is required');
     }

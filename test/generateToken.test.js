@@ -1,9 +1,9 @@
 require('jest');
 const jwt = require('jsonwebtoken');
 const PushNotifications = require('../push-notifications.js');
-const { USERS_STRING_MAX_LENGTH } = require('./utils')
+const { USERS_STRING_MAX_LENGTH } = require('./utils');
 
-describe('authenticateUser', () => {
+describe('generateToken', () => {
     let pn;
     beforeEach(() => {
         pn = new PushNotifications({
@@ -13,13 +13,11 @@ describe('authenticateUser', () => {
     });
 
     it('should fail if no user id is provided', () => {
-        expect(() => pn.authenticateUser()).toThrow(
-            'userId argument is required'
-        );
+        expect(() => pn.generateToken()).toThrow('userId argument is required');
     });
 
     it('should fail if the user id exceeds the permitted max length', () => {
-        expect(() => pn.authenticateUser('a'.repeat(165))).toThrow(
+        expect(() => pn.generateToken('a'.repeat(165))).toThrow(
             `userId is longer than the maximum length of ${USERS_STRING_MAX_LENGTH}`
         );
     });
@@ -32,7 +30,7 @@ describe('authenticateUser', () => {
             subject: userId
         };
         const expected = jwt.sign({}, pn.secretKey, options);
-        const actual = pn.authenticateUser(userId);
+        const actual = pn.generateToken(userId);
         expect(expected).toEqual(actual);
     });
 });
