@@ -42,7 +42,9 @@ describe('generateToken', () => {
             issuer: `https://${pn.instanceId}.pushnotifications.pusher.com`,
             subject: userId
         };
-        const expected = jwt.sign({}, pn.secretKey, options);
+        const expected = {
+            token: jwt.sign({}, pn.secretKey, options)
+        };
         const actual = pn.generateToken(userId);
         expect(expected).toEqual(actual);
     });
