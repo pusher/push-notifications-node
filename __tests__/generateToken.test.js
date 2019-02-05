@@ -28,6 +28,13 @@ describe('generateToken', () => {
         );
     });
 
+    it('should fail if the user if is not a string', () => {
+        const userId = false;
+        expect(() => pn.generateToken(userId).toThrow(
+            'userId must be a string'
+        ));
+    });
+
     it('should return a valid JWT token if everything is correct', () => {
         const userId = 'hermione.granger@hogwarts.ac.uk';
         const options = {

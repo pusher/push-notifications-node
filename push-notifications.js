@@ -69,6 +69,9 @@ PushNotifications.prototype.generateToken = function(userId) {
     if (userId === '') {
         throw new Error('userId cannot be the empty string');
     }
+    if (typeof userId !== 'string') {
+        throw new Error('userId must be a string');
+    }
     if (userId.length > USERS_STRING_MAX_LENGTH) {
         throw new Error(
             `userId is longer than the maximum length of ${USERS_STRING_MAX_LENGTH}`
