@@ -261,12 +261,11 @@ function isValidJson(value) {
 function doRequest(baseRequest, options) {
     return baseRequest(options)
         .then(res => {
+            const err = new Error('Could not parse response body');
             if (res.body) {
                 return isValidJson(res.body)
                     ? Promise.resolve(res.body)
-                    : Promise.reject(
-                          new Error('Could not parse response body')
-                      );
+                    : Promise.reject(err);
             }
             return Promise.resolve();
         })
