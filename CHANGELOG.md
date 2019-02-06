@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.1.0] - 2019-02-06
+### Added
+ - Support for publishing to Authenticated Users
+ - TypeScript typings for Authenticated Users
+### Changed
+ - Deprecates `publish` in favour of `publishToInterests`
+
 
 ## [1.0.1] - 2018-10-15
 ### Fixed
