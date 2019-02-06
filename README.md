@@ -28,9 +28,9 @@ let pushNotifications = new PushNotifications({
 ```
 
 ### Publishing a Notification
-Once you have created your Beams PushNotifications instance you can publish a push notification to your registered & subscribed devices:
+Once you have created your Beams PushNotifications instance, you can immediately publish a push notification to your devices, using [Device Interests](https://docs.pusher.com/beams/concepts/device-interests):
 ```javascript
-pushNotifications.publish(['hello'], {
+pushNotifications.publishToInterests(['hello'], {
   apns: {
     aps: {
       alert: 'Hello!'

@@ -49,7 +49,9 @@ describe('publishToUsers', () => {
             expect(data).toEqual({
                 publishId: '123456'
             });
-            expect(uri).toEqual('/publish_api/v1/instances/INSTANCE_ID/publishes/users');
+            expect(uri).toEqual(
+                '/publish_api/v1/instances/INSTANCE_ID/publishes/users'
+            );
             expect(headers).toEqual({
                 accept: 'application/json',
                 'content-type': 'application/json',
@@ -73,7 +75,7 @@ describe('publishToUsers', () => {
         nock(new RegExp('/.*/'))
             .post(new RegExp('/.*/'))
             .reply(() => {
-                return [200,{ publishId: '123456' }];
+                return [200, { publishId: '123456' }];
             });
 
         let users = [];
