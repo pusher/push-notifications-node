@@ -49,13 +49,9 @@ describe('publishToUsers', () => {
             expect(data).toEqual({
                 publishId: '123456'
             });
-<<<<<<< HEAD:test/publishToUsers.test.js
             expect(uri).toEqual(
                 '/publish_api/v1/instances/INSTANCE_ID/publishes/users'
             );
-=======
-            expect(uri).toEqual('/publish_api/v1/instances/INSTANCE_ID/publishes/users');
->>>>>>> add-users:__tests__/publishToUsers.test.js
             expect(headers).toEqual({
                 accept: 'application/json',
                 'content-type': 'application/json',
@@ -78,21 +74,8 @@ describe('publishToUsers', () => {
     it('should succeed if there are 1000 users', () => {
         nock(new RegExp('/.*/'))
             .post(new RegExp('/.*/'))
-<<<<<<< HEAD:test/publishToUsers.test.js
-            .reply(function(u, b) {
-                uri = u;
-                headers = this.req.headers;
-                body = b;
-                return [
-                    200,
-                    {
-                        publishId: '123456'
-                    }
-                ];
-=======
             .reply(() => {
-                return [200,{ publishId: '123456' }];
->>>>>>> add-users:__tests__/publishToUsers.test.js
+                return [200, { publishId: '123456' }];
             });
 
         let users = [];
