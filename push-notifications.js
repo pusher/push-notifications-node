@@ -261,7 +261,6 @@ function isValidJson(value) {
 function doRequest(baseRequest, options) {
     return baseRequest(options)
         .then(res => {
-            const err = new Error('Could not parse response body');
             if (res.body) {
                 const err = new Error('Could not parse response body');
                 return isValidJson(res.body)
