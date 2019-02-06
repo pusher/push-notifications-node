@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.1.0] - 2019-02-06
+### Added
+ - Support for publishing to Authenticated Users
+### Changed
+ - Deprecates `publish` in favour of `publishToUsers`
+ - Updates TypeScript typings to support publishing to Authenticated Users
+
 ## [1.0.1] - 2018-10-15
 ### Fixed
  - Accessing property on undefined object on non-json response
