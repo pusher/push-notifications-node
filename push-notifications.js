@@ -82,7 +82,11 @@ PushNotifications.prototype.generateToken = function(userId) {
         issuer: `https://${this.instanceId}.pushnotifications.pusher.com`,
         subject: userId
     };
-    return jwt.sign({}, this.secretKey, options);
+    const token = jwt.sign({}, this.secretKey, options);
+
+    return {
+        token: token
+    };
 };
 
 PushNotifications.prototype.publishToInterests = function(
