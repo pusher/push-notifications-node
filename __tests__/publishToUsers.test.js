@@ -60,7 +60,7 @@ describe('publishToUsers', () => {
                 'x-pusher-library': 'pusher-push-notifications-node 1.1.0',
                 host: 'instance_id.pushnotifications.pusher.com'
             });
-            expect(JSON.parse(body)).toEqual({
+            expect(body).toEqual({
                 users: ['harry.potter@hogwarts.ac.uk'],
                 apns: {
                     aps: {

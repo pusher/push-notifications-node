@@ -62,7 +62,7 @@ describe('publishToInterests', () => {
                 'content-type': 'application/json',
                 'content-length': 55
             });
-            expect(JSON.parse(body)).toEqual({
+            expect(body).toEqual({
                 interests: ['donuts'],
                 apns: {
                     aps: {
@@ -116,7 +116,7 @@ describe('publishToInterests', () => {
                 'x-pusher-library': 'pusher-push-notifications-node 1.1.0',
                 host: 'instance_id.pushnotifications.pusher.com'
             });
-            expect(JSON.parse(body)).toEqual({
+            expect(body).toEqual({
                 interests: ['donuts'],
                 apns: {
                     aps: {
@@ -204,7 +204,7 @@ describe('publishToInterests', () => {
                     'x-pusher-library': 'pusher-push-notifications-node 1.1.0',
                     host: '1234.pushnotifications.pusher.com'
                 });
-                expect(JSON.parse(body)).toEqual({
+                expect(body).toEqual({
                     interests,
                     apns: {
                         aps: {
