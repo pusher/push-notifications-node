@@ -1,7 +1,7 @@
 const request = require('request-promise-native');
 const jwt = require('jsonwebtoken');
 
-const SDK_VERSION = '1.1.0';
+const SDK_VERSION = '1.1.1';
 const INTERESTS_REGEX = new RegExp('^(_|\\-|=|@|,|\\.|;|[A-Z]|[a-z]|[0-9])*$');
 const {
     INTEREST_STRING_MAX_LENGTH,
