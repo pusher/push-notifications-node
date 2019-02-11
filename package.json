@@ -17,7 +17,8 @@
     "ci": "npx prettier \"./{*.js,*.d.ts}\" -l && yarn lint && yarn test",
     "format": "prettier \"./{*.js,*.d.ts}\" --write",
     "lint": "npx eslint **/*.js",
-    "test": "jest"
+    "test": "jest --testPathIgnorePatterns='/integration/'",
+    "test:integration": "jest --testPathPattern='/__tests__/integration/'"
   },
   "keywords": [
     "push notifications",
