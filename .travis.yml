@@ -4,4 +4,13 @@ node_js:
 cache:
   yarn: true
 install: yarn install
-script: yarn ci
+jobs:
+  include:
+    - stage: test
+      name: "Integration tests"
+      script: yarn test:integration
+    - script: yarn test:unit
+      name: "Unit tests"
+    - script: yarn lint
+      name: "Lint & Format"
+      
