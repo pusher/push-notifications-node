@@ -145,8 +145,7 @@ PushNotifications.prototype.publishToInterests = function(
         }
     }
 
-    publishRequest.interests = interests;
-    const body = JSON.stringify(publishRequest);
+    const body = Object.assign({}, publishRequest, { interests });
     const options = {
         uri: `${this.protocol}://${this.endpoint}/publish_api/v1/instances/${
             this.instanceId
@@ -155,7 +154,7 @@ PushNotifications.prototype.publishToInterests = function(
         body,
         headers: {
             'Content-Type': 'application/json',
-            'Content-Length': Buffer.byteLength(body)
+            'Content-Length': Buffer.byteLength(JSON.stringify(body))
         }
     };
 
@@ -202,8 +201,7 @@ PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
         }
     }
 
-    publishRequest.users = users;
-    const body = JSON.stringify(publishRequest);
+    const body = Object.assign({}, publishRequest, { users });
     const options = {
         uri: `${this.protocol}://${this.endpoint}/publish_api/v1/instances/${
             this.instanceId
@@ -212,7 +210,7 @@ PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
         body,
         headers: {
             'Content-Type': 'application/json',
-            'Content-Length': Buffer.byteLength(body)
+            'Content-Length': Buffer.byteLength(JSON.stringify(body))
         }
     };
 
