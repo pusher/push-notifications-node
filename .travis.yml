@@ -12,5 +12,4 @@ jobs:
     - script: yarn test:unit
       name: "Unit tests"
     - script: yarn lint
-      name: "Lint & Format"
-      
+      name: "Lint & Format
