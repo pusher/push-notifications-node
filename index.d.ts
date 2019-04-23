@@ -31,6 +31,22 @@ declare module '@pusher/push-notifications-server' {
 
         interface FcmPayload {
             /**
+             * Number of seconds that can pass before the notification is considered invalid and can be discarded.
+             */
+            time_to_live?: number;
+            /**
+             * Multiple notifications that have the same collapse_key will be displayed to the user as a single notification.
+             * The most recent notification will be shown.
+             */
+            collapse_key?: string;
+            /**
+             * Priority of the notification. Can be one of the following values:
+             *  - "normal": May be delayed to conserve device resources. (DEFAULT)
+             *  - "high": Will attempt to deliver immediately.
+             *     Notifications that are not displayed in the system tray may be downgraded to "normal" if sent too quickly.
+             */
+            priority?: 'normal' | 'high';
+            /**
              * Specifies the predefined, user-visible key-value pairs of the notification payload
              */
             notification?: FcmNotificationPayload;
@@ -102,6 +118,20 @@ declare module '@pusher/push-notifications-server' {
         }
 
         interface ApnsPayload {
+            /**
+             * Multiple notifications that have the same collapse_id will be displayed to the user as a single notification.
+             */
+            collapse_id?: string;
+            /**
+             * Timestamp after which this notification is considered invalid and can be discarded (time since unix epoch in seconds)
+             */
+            expiration?: number;
+            /**
+             * The priority of the notification. Can be one of the following values:
+             * - 10: Send the notification immediately (DEFAULT)
+             * - 5: Send the notification opportunistically, taking into account efficiency concerns such as battery usage
+             */
+            priority?: 5 | 10;
             aps: ApsPayload;
         }
 
