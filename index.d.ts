@@ -45,7 +45,7 @@ declare module '@pusher/push-notifications-server' {
              *  - "high": Will attempt to deliver immediately.
              *     Notifications that are not displayed in the system tray may be downgraded to "normal" if sent too quickly.
              */
-            priority?: "normal" | "high";
+            priority?: 'normal' | 'high';
             /**
              * Specifies the predefined, user-visible key-value pairs of the notification payload
              */
