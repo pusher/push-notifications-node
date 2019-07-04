@@ -18,7 +18,9 @@
     "lint": "npx eslint **/*.js && npx prettier \"./{*.js,*.d.ts}\" -l",
     "test": "yarn test:unit && yarn test:integration",
     "test:integration": "jest --testPathPattern='/__tests__/integration/'",
-    "test:unit": "jest --testPathIgnorePatterns='/integration/'"
+    "test:unit": "jest --testPathIgnorePatterns='/integration/'",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "keywords": [
     "push notifications",
@@ -30,6 +32,8 @@
   "dependencies": {
     "jsonwebtoken": "^8.4.0",
     "request": "^2.88.0",
-    "request-promise-native": "^1.0.5"
-  }
+    "request-promise-native": "^1.0.5",
+    "snyk": "^1.190.0"
+  },
+  "snyk": true
 }
