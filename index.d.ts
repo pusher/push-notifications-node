@@ -19,9 +19,29 @@ declare module '@pusher/push-notifications-server' {
             fcm: FcmPayload;
         }
 
+        interface PublishRequestWithWeb extends PublishRequestBase {
+            web: WebPayload;
+        }
+
         interface PublishRequestWithApnsAndFcm extends PublishRequestBase {
             apns: ApnsPayload;
             fcm: FcmPayload;
+        }
+
+        interface PublishRequestWithApnsAndWeb extends PublishRequestBase {
+            apns: ApnsPayload;
+            web: WebPayload;
+        }
+
+        interface PublishRequestWithFcmAndWeb extends PublishRequestBase {
+            fcm: FcmPayload;
+            web: WebPayload;
+        }
+
+        interface PublishRequestWithAllPlatforms extends PublishRequestBase {
+            apns: ApnsPayload;
+            fcm: FcmPayload;
+            web: WebPayload;
         }
 
         type PublishRequest =
@@ -211,6 +231,46 @@ declare module '@pusher/push-notifications-server' {
              * uses the image identified by the UILaunchImageFile key in the app’s Info.plist file, or falls back to Default.png.
              */
             'launch-image'?: string;
+        }
+
+        interface WebPayload {
+            /**
+             * The number of seconds the web push gateway should store the notification for whilst the user is offline.
+             * Max: 2419200; Default: 4 weeks.
+             */
+            time_to_live?: number;
+            /**
+             * Specifies the predefined, user-visible key-value pairs of the notification payload
+             */
+            notification?: WebNotificationPayload;
+            /**
+             * Specifies the custom key-value pairs of the message's payload
+             */
+            data?: object;
+        }
+
+        interface WebNotificationPayload {
+            /**
+             * The title shown when the notification is displayed to the user.
+             */
+            title?: string;
+            /**
+             * The body shown when the notification is displayed to the user.
+             */
+            body?: string;
+            /**
+             * URL of the image shown as the notification icon when the notification is displayed.
+             */
+            icon?: string;
+            /**
+             * If provided, this URL will be opened in a new tab when the notification is clicked.
+             */
+            deep_link?: string;
+            /**
+             * If set to true, the notification will not be shown if your site has focus.
+             * Default: false.
+             */
+            hide_notification_if_site_has_focus?: string;
         }
 
         interface PublishResponse {
