@@ -11,12 +11,14 @@
     "eslint-config-prettier": "^4.0.0",
     "jest": "^23.6.0",
     "nock": "^9.1.5",
-    "prettier": "1.14.3"
+    "prettier": "1.14.3",
+    "tsd": "^0.13.1"
   },
   "scripts": {
     "format": "prettier \"./{*.js,*.d.ts}\" --write",
     "lint": "npx eslint **/*.js && npx prettier \"./{*.js,*.d.ts}\" -l",
-    "test": "yarn test:unit && yarn test:integration",
+    "test": "yarn test:ts && yarn test:unit && yarn test:integration",
+    "test:ts": "tsd .",
     "test:integration": "jest --testPathPattern='/__tests__/integration/'",
     "test:unit": "jest --testPathIgnorePatterns='/integration/'"
   },
