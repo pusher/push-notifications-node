@@ -1,37 +1,37 @@
 {
-  "name": "@pusher/push-notifications-server",
-  "version": "1.2.0",
-  "description": "NodeJS Server SDK for Pusher Push Notifications",
-  "main": "push-notifications.js",
-  "repository": "https://github.com/pusher/push-notifications-node",
-  "author": "Pusher <support@pusher.com>",
-  "license": "MIT",
-  "devDependencies": {
-    "eslint": "^4.14.0",
-    "eslint-config-prettier": "^4.0.0",
-    "jest": "^23.6.0",
-    "nock": "^9.1.5",
-    "prettier": "1.14.3",
-    "tsd": "^0.13.1"
-  },
-  "scripts": {
-    "format": "prettier \"./{*.js,*.d.ts}\" --write",
-    "lint": "npx eslint **/*.js && npx prettier \"./{*.js,*.d.ts}\" -l",
-    "test": "yarn test:ts && yarn test:unit && yarn test:integration",
-    "test:ts": "tsd .",
-    "test:integration": "jest --testPathPattern='/__tests__/integration/'",
-    "test:unit": "jest --testPathIgnorePatterns='/integration/'"
-  },
-  "keywords": [
-    "push notifications",
-    "notifications",
-    "pusher",
-    "realtime"
-  ],
-  "types": "index.d.ts",
-  "dependencies": {
-    "jsonwebtoken": "^8.4.0",
-    "request": "^2.88.0",
-    "request-promise-native": "^1.0.5"
-  }
+    "name": "@pusher/push-notifications-server",
+    "version": "1.2.1",
+    "description": "NodeJS Server SDK for Pusher Push Notifications",
+    "main": "push-notifications.js",
+    "repository": "https://github.com/pusher/push-notifications-node",
+    "author": "Pusher <support@pusher.com>",
+    "license": "MIT",
+    "devDependencies": {
+        "eslint": "^4.14.0",
+        "eslint-config-prettier": "^4.0.0",
+        "jest": "^23.6.0",
+        "nock": "^9.1.5",
+        "prettier": "1.14.3",
+        "tsd": "^0.13.1"
+    },
+    "scripts": {
+        "format": "prettier \"./{*.js,*.d.ts}\" --write",
+        "lint": "npx eslint **/*.js && npx prettier \"./{*.js,*.d.ts}\" -l",
+        "test": "yarn test:ts && yarn test:unit && yarn test:integration",
+        "test:ts": "tsd .",
+        "test:integration": "jest --testPathPattern='/__tests__/integration/'",
+        "test:unit": "jest --testPathIgnorePatterns='/integration/'"
+    },
+    "keywords": [
+        "push notifications",
+        "notifications",
+        "pusher",
+        "realtime"
+    ],
+    "types": "index.d.ts",
+    "dependencies": {
+        "jsonwebtoken": "^8.4.0",
+        "request": "^2.88.0",
+        "request-promise-native": "^1.0.5"
+    }
 }
