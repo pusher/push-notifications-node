@@ -145,7 +145,7 @@ PushNotifications.prototype.publishToInterests = function(
             this.instanceId
         }/publishes/interests`,
         method: 'POST',
-        body,
+        body
     };
 
     return this._doRequest(options);
@@ -193,11 +193,9 @@ PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
 
     const body = Object.assign({}, publishRequest, { users });
     const options = {
-        path: `/publish_api/v1/instances/${
-            this.instanceId
-        }/publishes/users`,
+        path: `/publish_api/v1/instances/${this.instanceId}/publishes/users`,
         method: 'POST',
-        body,
+        body
     };
 
     return this._doRequest(options);
@@ -230,9 +228,9 @@ PushNotifications.prototype._doRequest = function(options) {
         path: options.path,
         host: this.endpoint,
         headers: {
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${this.secretKey}`,
-            'X-Pusher-Library': `pusher-push-notifications-node ${SDK_VERSION}`,
+            Accept: 'application/json',
+            Authorization: `Bearer ${this.secretKey}`,
+            'X-Pusher-Library': `pusher-push-notifications-node ${SDK_VERSION}`
         }
     };
 
@@ -267,17 +265,22 @@ PushNotifications.prototype._doRequest = function(options) {
                         }
                     }
 
-                    if (response.statusCode >= 200 && response.statusCode < 300) {
+                    if (
+                        response.statusCode >= 200 &&
+                        response.statusCode < 300
+                    ) {
                         resolve(resBody);
                     } else {
                         if (!resBody.error || !resBody.description) {
                             reject(new Error('Could not parse response body'));
                         } else {
-                            reject(new Error(
-                                `${response.statusCode} ${resBody.error} - ${
-                                    resBody.description
-                                }`
-                            ));
+                            reject(
+                                new Error(
+                                    `${response.statusCode} ${
+                                        resBody.error
+                                    } - ${resBody.description}`
+                                )
+                            );
                         }
                     }
                 });
