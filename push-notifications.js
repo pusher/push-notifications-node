@@ -1,5 +1,6 @@
-const request = require('request-promise-native');
 const jwt = require('jsonwebtoken');
+const http = require('http');
+const https = require('https');
 
 const SDK_VERSION = '1.2.0';
 const INTERESTS_REGEX = new RegExp('^(_|\\-|=|@|,|\\.|;|[A-Z]|[a-z]|[0-9])*$');
@@ -31,6 +32,8 @@ function PushNotifications(options) {
     this.instanceId = options.instanceId;
     this.secretKey = options.secretKey;
 
+    this.port = options.port || null;
+
     if (!options.hasOwnProperty('endpoint')) {
         this.protocol = 'https';
         this.endpoint = `${this.instanceId}.pushnotifications.pusher.com`;
@@ -40,16 +43,6 @@ function PushNotifications(options) {
         this.protocol = 'http';
         this.endpoint = options.endpoint;
     }
-
-    this._baseRequest = request.defaults({
-        headers: {
-            Authorization: `Bearer ${this.secretKey}`,
-            'X-Pusher-Library': `pusher-push-notifications-node ${SDK_VERSION}`
-        },
-        json: true,
-        simple: true,
-        resolveWithFullResponse: true
-    });
 }
 
 /**
@@ -146,19 +139,16 @@ PushNotifications.prototype.publishToInterests = function(
     }
 
     const body = Object.assign({}, publishRequest, { interests });
+
     const options = {
-        uri: `${this.protocol}://${this.endpoint}/publish_api/v1/instances/${
+        path: `/publish_api/v1/instances/${
             this.instanceId
         }/publishes/interests`,
         method: 'POST',
         body,
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': Buffer.byteLength(JSON.stringify(body))
-        }
     };
 
-    return doRequest(this._baseRequest, options);
+    return this._doRequest(options);
 };
 
 PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
@@ -203,18 +193,14 @@ PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
 
     const body = Object.assign({}, publishRequest, { users });
     const options = {
-        uri: `${this.protocol}://${this.endpoint}/publish_api/v1/instances/${
+        path: `/publish_api/v1/instances/${
             this.instanceId
         }/publishes/users`,
         method: 'POST',
         body,
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': Buffer.byteLength(JSON.stringify(body))
-        }
     };
 
-    return doRequest(this._baseRequest, options);
+    return this._doRequest(options);
 };
 
 PushNotifications.prototype.deleteUser = function(userId) {
@@ -229,79 +215,86 @@ PushNotifications.prototype.deleteUser = function(userId) {
     }
 
     const options = {
-        uri: `${this.protocol}://${this.endpoint}/user_api/v1/instances/${
+        path: `/user_api/v1/instances/${
             this.instanceId
         }/users/${encodeURIComponent(userId)}`,
         method: 'DELETE'
     };
-
-    return doRequest(this._baseRequest, options);
+    return this._doRequest(options);
 };
 
-function isJsonString(str) {
-    try {
-        JSON.parse(str);
-    } catch (e) {
-        return false;
-    }
-    return true;
-}
-function isValidJson(value) {
-    if (typeof value === 'object' || typeof value === 'number') {
-        return true;
-    }
-    if (typeof value === 'string') {
-        return isJsonString(value);
-    }
-    return false;
-}
+PushNotifications.prototype._doRequest = function(options) {
+    const httpLib = this.protocol === 'http' ? http : https;
+    const reqOptions = {
+        method: options.method,
+        path: options.path,
+        host: this.endpoint,
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${this.secretKey}`,
+            'X-Pusher-Library': `pusher-push-notifications-node ${SDK_VERSION}`,
+        }
+    };
 
-function doRequest(baseRequest, options) {
-    return baseRequest(options)
-        .then(res => {
-            if (res.body) {
-                const err = new Error('Could not parse response body');
-                return isValidJson(res.body)
-                    ? Promise.resolve(res.body)
-                    : Promise.reject(err);
-            }
-            return Promise.resolve();
-        })
-        .catch(err => {
-            if (err.name === 'StatusCodeError') {
-                let errorMessage;
-                let failureMessage = 'Could not parse response body';
-                try {
-                    errorMessage =
-                        typeof err.error === 'object'
-                            ? err.error
-                            : JSON.parse(err.error);
-                } catch (e) {
-                    return Promise.reject(new Error(failureMessage));
-                }
-                if (
-                    !(
-                        errorMessage.hasOwnProperty('error') &&
-                        errorMessage.hasOwnProperty('description')
-                    )
-                ) {
-                    return Promise.reject(new Error(failureMessage));
-                }
+    if (this.port) {
+        reqOptions.port = this.port;
+    }
 
-                return Promise.reject(
-                    new Error(
-                        `${err.statusCode} ${err.error.error} - ${
-                            err.error.description
-                        }`
-                    )
-                );
-            }
+    let reqBodyStr;
+    if (options.body) {
+        reqBodyStr = JSON.stringify(options.body);
+        reqOptions.headers['Content-Type'] = 'application/json';
+        reqOptions.headers['Content-Length'] = Buffer.byteLength(reqBodyStr);
+    }
 
-            if (err instanceof Error) {
-                return Promise.reject(err);
+    return new Promise(function(resolve, reject) {
+        try {
+            const req = httpLib.request(reqOptions, function(response) {
+                let resBodyStr = '';
+                response.on('data', function(chunk) {
+                    resBodyStr += chunk;
+                });
+
+                response.on('end', function() {
+                    let resBody;
+
+                    if (resBodyStr) {
+                        try {
+                            resBody = JSON.parse(resBodyStr);
+                        } catch (_) {
+                            reject(new Error('Could not parse response body'));
+                            return;
+                        }
+                    }
+
+                    if (response.statusCode >= 200 && response.statusCode < 300) {
+                        resolve(resBody);
+                    } else {
+                        if (!resBody.error || !resBody.description) {
+                            reject(new Error('Could not parse response body'));
+                        } else {
+                            reject(new Error(
+                                `${response.statusCode} ${resBody.error} - ${
+                                    resBody.description
+                                }`
+                            ));
+                        }
+                    }
+                });
+            });
+
+            req.on('error', function(error) {
+                reject(error);
+            });
+
+            if (reqBodyStr) {
+                req.write(reqBodyStr);
             }
-            return Promise.reject(new Error(err));
-        });
-}
+            req.end();
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
 
 module.exports = PushNotifications;
