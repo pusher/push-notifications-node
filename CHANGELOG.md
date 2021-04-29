@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.3
+
+* [CHANGED] Switch from Travis CI to GH actions
+
 ## 1.2.2
 
 * [REMOVED] `requests` dependency and replaced with standard library
