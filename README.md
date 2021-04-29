@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/pusher/push-notifications-node.svg?branch=master)](https://travis-ci.org/pusher/push-notifications-node)
+[![Build](https://github.com/pusher/push-notifications-node/actions/workflows/build.yml/badge.svg)](https://github.com/pusher/push-notifications-node/actions/workflows/build.yml) [![npm](https://img.shields.io/npm/v/@pusher/push-notifications-server)](https://www.npmjs.com/package/@pusher/push-notifications-server) [![npm](https://img.shields.io/npm/dm/@pusher/push-notifications-server)](https://www.npmjs.com/package/@pusher/push-notifications-server)
 # Pusher Beams Node.js Server SDK
 Full documentation for this SDK can be found [here](https://docs.pusher.com/beams/reference/server-sdk-node)
 
