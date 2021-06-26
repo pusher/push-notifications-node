@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.4
+
+* [CHANGED] Remove some redundant steps from release action
+
 ## 1.2.3
 
 * [CHANGED] Switch from Travis CI to GH actions
