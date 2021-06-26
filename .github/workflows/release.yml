@@ -64,8 +64,7 @@ jobs:
         run: |
           export MAJOR=$(echo "${{ env.VERSION }}" | cut -d'.' -f1)
           export MINOR=$(echo "${{ env.VERSION }}" | cut -d'.' -f2)
-          sed -i "s|\"pusher/pusher-php-server\": \"^[0-9]*\.[0-9]*\"|\"pusher/pusher-php-server\": \"^${MAJOR}.${MINOR}\"|" README.md
-      - name: Prepare Pusher.php
+      - name: Prepare update
         run: |
           sed -i "s|\"version\": \"[^\"]*\"|\"version\": \"${{ env.VERSION }}\"|" package.json
           sed -i "s|const SDK_VERSION = '[^']*'|const SDK_VERSION = '${{ env.VERSION }}'|" push-notifications.js
