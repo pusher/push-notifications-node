@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.5
+
+* [CHANGED] Added `data` type for `ApnsPayload`
+
 ## 1.2.4
 
 * [CHANGED] Remove some redundant steps from release action
