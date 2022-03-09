@@ -156,6 +156,10 @@ declare namespace PushNotifications {
          */
         priority?: 5 | 10;
         aps: ApsPayload;
+        /**
+         * Specifies the custom key-value pairs of the message's payload
+         */
+        data?: object;
     }
 
     // See: https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html
