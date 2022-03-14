@@ -27,7 +27,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
           scope: '@pusher'
       - run: yarn install
-      - run: yarn publish
+      - run: yarn publish --verbose
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
