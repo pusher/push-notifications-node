@@ -24,7 +24,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 10.x
-          registry-url: https://registry.npmjs.org/
+          registry-url: 'https://registry.npmjs.org'
           scope: '@pusher'
       - run: yarn install
       - run: yarn publish --verbose --dry-run

@@ -1,5 +1,5 @@
 {
-    "name": "push-notifications-server",
+    "name": "@pusher/push-notifications-server",
     "version": "1.2.5",
     "description": "NodeJS Server SDK for Pusher Push Notifications",
     "main": "push-notifications.js",
