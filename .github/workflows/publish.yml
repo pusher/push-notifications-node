@@ -2,7 +2,7 @@ name: Publish
 
 on:
   push:
-    branches: [ master ]
+    branches: [ testing-release ]
 
 jobs:
   build:
@@ -27,7 +27,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
           scope: '@pusher'
       - run: yarn install
-      - run: yarn publish --verbose
+      - run: yarn publish --verbose --dry-run
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
