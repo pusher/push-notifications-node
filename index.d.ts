@@ -297,7 +297,7 @@ declare class PushNotifications {
      * @param userId The given user id for which to generate a Pusher Beams auth token.
      * @returns a Pusher Beams auth token
      */
-    generateToken(userId: string): PushNotifications.Token;
+    generateToken(userId: string): { token: PushNotifications.Token };
 
     /**
      * Publish a notification to device interest(s).
