@@ -277,7 +277,7 @@ declare namespace PushNotifications {
          * If set to true, the notification will not be shown if your site has focus.
          * Default: false.
          */
-        hide_notification_if_site_has_focus?: string;
+        hide_notification_if_site_has_focus?: boolean;
     }
 
     interface PublishResponse {
