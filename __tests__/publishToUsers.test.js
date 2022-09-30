@@ -57,7 +57,7 @@ describe('publishToUsers', () => {
                 'content-type': 'application/json',
                 'content-length': 72,
                 authorization: 'Bearer SECRET_KEY',
-                'x-pusher-library': 'pusher-push-notifications-node 1.2.4',
+                'x-pusher-library': 'pusher-push-notifications-node 1.2.6',
                 host: 'instance_id.pushnotifications.pusher.com'
             });
             expect(body).toEqual({

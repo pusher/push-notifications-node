@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const http = require('http');
 const https = require('https');
 
-const SDK_VERSION = '1.2.4';
+const SDK_VERSION = '1.2.6';
 const INTERESTS_REGEX = new RegExp('^(_|\\-|=|@|,|\\.|;|[A-Z]|[a-z]|[0-9])*$');
 const {
     INTEREST_STRING_MAX_LENGTH,
