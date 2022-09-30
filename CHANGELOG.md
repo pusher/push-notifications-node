@@ -2,7 +2,7 @@
 
 ## 1.2.6
 
-* [CHANGED] Fix the hide_notification_if_site_has_focus TypeScript
+* [FIXED] Fix the hide_notification_if_site_has_focus TypeScript
 * [FIXED] Fixes the incorrect TypeScript signature for the generateToken function
 
 ## 1.2.5
