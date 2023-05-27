@@ -287,7 +287,7 @@ declare namespace PushNotifications {
         publishId: string;
     }
 
-    type Token = string;
+    type Token = { token: Token };
 }
 
 declare class PushNotifications {
