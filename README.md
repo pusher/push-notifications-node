@@ -1,6 +1,6 @@
 [![Build](https://github.com/pusher/push-notifications-node/actions/workflows/build.yml/badge.svg)](https://github.com/pusher/push-notifications-node/actions/workflows/build.yml) [![npm](https://img.shields.io/npm/v/@pusher/push-notifications-server)](https://www.npmjs.com/package/@pusher/push-notifications-server) [![npm](https://img.shields.io/npm/dm/@pusher/push-notifications-server)](https://www.npmjs.com/package/@pusher/push-notifications-server)
 # Pusher Beams Node.js Server SDK
-Full documentation for this SDK can be found [here](https://docs.pusher.com/beams/reference/server-sdk-node)
+Full documentation for this SDK can be found [here](https://pusher.com/docs/beams/reference/server-sdk-node/)
 
 ## Installation
 The Beams Node.js server SDK is available on npm [here](https://www.npmjs.com/package/@pusher/push-notifications-server).
@@ -28,7 +28,7 @@ let pushNotifications = new PushNotifications({
 ```
 
 ### Publishing a Notification
-Once you have created your Beams PushNotifications instance, you can immediately publish a push notification to your devices, using [Device Interests](https://docs.pusher.com/beams/concepts/device-interests):
+Once you have created your Beams PushNotifications instance, you can immediately publish a push notification to your devices, using [Device Interests](https://pusher.com/docs/beams/concepts/device-interests/):
 ```javascript
 pushNotifications.publishToInterests(['hello'], {
   apns: {
