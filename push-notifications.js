@@ -8,7 +8,7 @@ const {
     INTEREST_STRING_MAX_LENGTH,
     INTEREST_ARRAY_MAX_LENGTH,
     USERS_ARRAY_MAX_LENGTH,
-    USERS_STRING_MAX_LENGTH
+    USERS_STRING_MAX_LENGTH,
 } = require('./utils');
 
 function PushNotifications(options) {
@@ -17,7 +17,7 @@ function PushNotifications(options) {
     }
     if (!options.hasOwnProperty('instanceId')) {
         throw new Error(
-            '"instanceId" is required in PushNotifications options'
+            '"instanceId" is required in PushNotifications options',
         );
     }
     if (typeof options.instanceId !== 'string') {
@@ -50,12 +50,12 @@ function PushNotifications(options) {
  * @deprecated Use publishToInterests instead
  */
 
-PushNotifications.prototype.publish = function(interests, publishRequest) {
+PushNotifications.prototype.publish = function (interests, publishRequest) {
     console.warn('`publish` is deprecated. Use `publishToInterests` instead.');
     return this.publishToInterests(interests, publishRequest);
 };
 
-PushNotifications.prototype.generateToken = function(userId) {
+PushNotifications.prototype.generateToken = function (userId) {
     if (userId === undefined || userId === null) {
         throw new Error('userId argument is required');
     }
@@ -67,38 +67,39 @@ PushNotifications.prototype.generateToken = function(userId) {
     }
     if (userId.length > USERS_STRING_MAX_LENGTH) {
         throw new Error(
-            `userId is longer than the maximum length of ${USERS_STRING_MAX_LENGTH}`
+            `userId is longer than the maximum length of ${USERS_STRING_MAX_LENGTH}`,
         );
     }
     const options = {
         expiresIn: '24h',
         issuer: `https://${this.instanceId}.pushnotifications.pusher.com`,
-        subject: userId
+        subject: userId,
+        allowInsecureKeySizes: true,
     };
     const token = jwt.sign({}, this.secretKey, options);
 
     return {
-        token: token
+        token: token,
     };
 };
 
-PushNotifications.prototype.publishToInterests = function(
+PushNotifications.prototype.publishToInterests = function (
     interests,
-    publishRequest
+    publishRequest,
 ) {
     if (interests === undefined || interests === null) {
         return Promise.reject(new Error('interests argument is required'));
     }
     if (!(interests instanceof Array)) {
         return Promise.reject(
-            new Error('interests argument is must be an array')
+            new Error('interests argument is must be an array'),
         );
     }
     if (interests.length < 1) {
         return Promise.reject(
             new Error(
-                'Publish requests must target at least one interest to be delivered'
-            )
+                'Publish requests must target at least one interest to be delivered',
+            ),
         );
     }
     if (interests.length > INTEREST_ARRAY_MAX_LENGTH) {
@@ -106,8 +107,8 @@ PushNotifications.prototype.publishToInterests = function(
             new Error(
                 `Number of interests (${
                     interests.length
-                }) exceeds maximum of ${INTEREST_ARRAY_MAX_LENGTH}.`
-            )
+                }) exceeds maximum of ${INTEREST_ARRAY_MAX_LENGTH}.`,
+            ),
         );
     }
     if (publishRequest === undefined || publishRequest === null) {
@@ -116,15 +117,15 @@ PushNotifications.prototype.publishToInterests = function(
     for (const interest of interests) {
         if (typeof interest !== 'string') {
             return Promise.reject(
-                new Error(`interest ${interest} is not a string`)
+                new Error(`interest ${interest} is not a string`),
             );
         }
         if (interest.length > INTEREST_STRING_MAX_LENGTH) {
             return Promise.reject(
                 new Error(
                     `interest ${interest} is longer than the maximum of ` +
-                        `${INTEREST_STRING_MAX_LENGTH} characters`
-                )
+                        `${INTEREST_STRING_MAX_LENGTH} characters`,
+                ),
             );
         }
         if (!INTERESTS_REGEX.test(interest)) {
@@ -132,8 +133,8 @@ PushNotifications.prototype.publishToInterests = function(
                 new Error(
                     `interest "${interest}" contains a forbidden character. ` +
                         'Allowed characters are: ASCII upper/lower-case letters, ' +
-                        'numbers or one of _-=@,.;'
-                )
+                        'numbers or one of _-=@,.;',
+                ),
             );
         }
     }
@@ -145,13 +146,13 @@ PushNotifications.prototype.publishToInterests = function(
             this.instanceId
         }/publishes/interests`,
         method: 'POST',
-        body
+        body,
     };
 
     return this._doRequest(options);
 };
 
-PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
+PushNotifications.prototype.publishToUsers = function (users, publishRequest) {
     if (users === undefined || users === null) {
         return Promise.reject(new Error('users argument is required'));
     }
@@ -161,8 +162,8 @@ PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
     if (users.length < 1) {
         return Promise.reject(
             new Error(
-                'Publish requests must target at least one interest to be delivered'
-            )
+                'Publish requests must target at least one interest to be delivered',
+            ),
         );
     }
     if (users.length > USERS_ARRAY_MAX_LENGTH) {
@@ -170,8 +171,8 @@ PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
             new Error(
                 `Number of users (${
                     users.length
-                }) exceeds maximum of ${USERS_ARRAY_MAX_LENGTH}.`
-            )
+                }) exceeds maximum of ${USERS_ARRAY_MAX_LENGTH}.`,
+            ),
         );
     }
     if (publishRequest === undefined || publishRequest === null) {
@@ -185,8 +186,8 @@ PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
             return Promise.reject(
                 new Error(
                     `user ${user} is longer than the maximum of ` +
-                        `${INTEREST_STRING_MAX_LENGTH} characters`
-                )
+                        `${INTEREST_STRING_MAX_LENGTH} characters`,
+                ),
             );
         }
     }
@@ -195,13 +196,13 @@ PushNotifications.prototype.publishToUsers = function(users, publishRequest) {
     const options = {
         path: `/publish_api/v1/instances/${this.instanceId}/publishes/users`,
         method: 'POST',
-        body
+        body,
     };
 
     return this._doRequest(options);
 };
 
-PushNotifications.prototype.deleteUser = function(userId) {
+PushNotifications.prototype.deleteUser = function (userId) {
     if (userId === undefined || userId === null) {
         return Promise.reject(new Error('User ID argument is required'));
     }
@@ -216,12 +217,12 @@ PushNotifications.prototype.deleteUser = function(userId) {
         path: `/user_api/v1/instances/${
             this.instanceId
         }/users/${encodeURIComponent(userId)}`,
-        method: 'DELETE'
+        method: 'DELETE',
     };
     return this._doRequest(options);
 };
 
-PushNotifications.prototype._doRequest = function(options) {
+PushNotifications.prototype._doRequest = function (options) {
     const httpLib = this.protocol === 'http' ? http : https;
     const reqOptions = {
         method: options.method,
@@ -230,8 +231,8 @@ PushNotifications.prototype._doRequest = function(options) {
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${this.secretKey}`,
-            'X-Pusher-Library': `pusher-push-notifications-node ${SDK_VERSION}`
-        }
+            'X-Pusher-Library': `pusher-push-notifications-node ${SDK_VERSION}`,
+        },
     };
 
     if (this.port) {
@@ -245,15 +246,15 @@ PushNotifications.prototype._doRequest = function(options) {
         reqOptions.headers['Content-Length'] = Buffer.byteLength(reqBodyStr);
     }
 
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         try {
-            const req = httpLib.request(reqOptions, function(response) {
+            const req = httpLib.request(reqOptions, function (response) {
                 let resBodyStr = '';
-                response.on('data', function(chunk) {
+                response.on('data', function (chunk) {
                     resBodyStr += chunk;
                 });
 
-                response.on('end', function() {
+                response.on('end', function () {
                     let resBody;
 
                     if (resBodyStr) {
@@ -278,15 +279,15 @@ PushNotifications.prototype._doRequest = function(options) {
                                 new Error(
                                     `${response.statusCode} ${
                                         resBody.error
-                                    } - ${resBody.description}`
-                                )
+                                    } - ${resBody.description}`,
+                                ),
                             );
                         }
                     }
                 });
             });
 
-            req.on('error', function(error) {
+            req.on('error', function (error) {
                 reject(error);
             });
 

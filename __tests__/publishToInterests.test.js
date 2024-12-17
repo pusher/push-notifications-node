@@ -21,6 +21,7 @@ describe('publishToInterests', () => {
 
     it('should make the correct http request with valid params', () => {
         let uri, headers, body;
+
         nock(new RegExp('/.*/'))
             .post(new RegExp('/.*/'))
             .reply(function(u, b) {
@@ -93,7 +94,7 @@ describe('publishToInterests', () => {
             instanceId: 'INSTANCE_ID',
             secretKey: 'SECRET_KEY'
         });
-        const response = pn.publish(['donuts'], {
+        const response = pn.publishToInterests(['donuts'], {
             apns: {
                 aps: {
                     alert: 'Hi!'
@@ -233,7 +234,7 @@ describe('publishToInterests', () => {
             .publishToInterests(['good-interest', 'bad|interest'], {})
             .catch(error => {
                 expect(error.message).toMatch(/contains a forbidden character/);
-                return pn.publish(['good-interest', 'bad:interest'], {});
+                return pn.publishToInterests(['good-interest', 'bad:interest'], {});
             })
             .catch(error => {
                 expect(error.message).toMatch(/contains a forbidden character/);
