@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.7
+
+* [CHANGED] jsonwebtoken package version from v8 to v9
+
 ## 1.2.6
 
 * [FIXED] Fix the hide_notification_if_site_has_focus TypeScript

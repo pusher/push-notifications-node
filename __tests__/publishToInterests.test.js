@@ -58,7 +58,7 @@ describe('publishToInterests', () => {
             expect(headers).toEqual({
                 authorization: 'Bearer SECRET_KEY',
                 accept: 'application/json',
-                'x-pusher-library': 'pusher-push-notifications-node 1.2.6',
+                'x-pusher-library': 'pusher-push-notifications-node 1.2.7',
                 host: 'instance_id.pushnotifications.pusher.com',
                 'content-type': 'application/json',
                 'content-length': 55
@@ -114,7 +114,7 @@ describe('publishToInterests', () => {
                 'content-type': 'application/json',
                 'content-length': 55,
                 authorization: 'Bearer SECRET_KEY',
-                'x-pusher-library': 'pusher-push-notifications-node 1.2.6',
+                'x-pusher-library': 'pusher-push-notifications-node 1.2.7',
                 host: 'instance_id.pushnotifications.pusher.com'
             });
             expect(body).toEqual({
@@ -202,7 +202,7 @@ describe('publishToInterests', () => {
                     'content-type': 'application/json',
                     'content-length': 1846,
                     authorization: 'Bearer 1234',
-                    'x-pusher-library': 'pusher-push-notifications-node 1.2.6',
+                    'x-pusher-library': 'pusher-push-notifications-node 1.2.7',
                     host: '1234.pushnotifications.pusher.com'
                 });
                 expect(body).toEqual({
