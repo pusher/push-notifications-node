@@ -21,6 +21,7 @@ describe('publishToInterests', () => {
 
     it('should make the correct http request with valid params', () => {
         let uri, headers, body;
+
         nock(new RegExp('/.*/'))
             .post(new RegExp('/.*/'))
             .reply(function(u, b) {
@@ -57,7 +58,7 @@ describe('publishToInterests', () => {
             expect(headers).toEqual({
                 authorization: 'Bearer SECRET_KEY',
                 accept: 'application/json',
-                'x-pusher-library': 'pusher-push-notifications-node 1.2.6',
+                'x-pusher-library': 'pusher-push-notifications-node 1.2.7',
                 host: 'instance_id.pushnotifications.pusher.com',
                 'content-type': 'application/json',
                 'content-length': 55
@@ -93,7 +94,7 @@ describe('publishToInterests', () => {
             instanceId: 'INSTANCE_ID',
             secretKey: 'SECRET_KEY'
         });
-        const response = pn.publish(['donuts'], {
+        const response = pn.publishToInterests(['donuts'], {
             apns: {
                 aps: {
                     alert: 'Hi!'
@@ -113,7 +114,7 @@ describe('publishToInterests', () => {
                 'content-type': 'application/json',
                 'content-length': 55,
                 authorization: 'Bearer SECRET_KEY',
-                'x-pusher-library': 'pusher-push-notifications-node 1.2.6',
+                'x-pusher-library': 'pusher-push-notifications-node 1.2.7',
                 host: 'instance_id.pushnotifications.pusher.com'
             });
             expect(body).toEqual({
@@ -201,7 +202,7 @@ describe('publishToInterests', () => {
                     'content-type': 'application/json',
                     'content-length': 1846,
                     authorization: 'Bearer 1234',
-                    'x-pusher-library': 'pusher-push-notifications-node 1.2.6',
+                    'x-pusher-library': 'pusher-push-notifications-node 1.2.7',
                     host: '1234.pushnotifications.pusher.com'
                 });
                 expect(body).toEqual({
@@ -233,7 +234,7 @@ describe('publishToInterests', () => {
             .publishToInterests(['good-interest', 'bad|interest'], {})
             .catch(error => {
                 expect(error.message).toMatch(/contains a forbidden character/);
-                return pn.publish(['good-interest', 'bad:interest'], {});
+                return pn.publishToInterests(['good-interest', 'bad:interest'], {});
             })
             .catch(error => {
                 expect(error.message).toMatch(/contains a forbidden character/);

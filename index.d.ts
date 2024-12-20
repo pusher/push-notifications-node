@@ -306,7 +306,7 @@ declare class PushNotifications {
      */
     publishToInterests<T extends PushNotifications.PublishRequest>(
         interests: string[],
-        publishRequest: PushNotifications.PublishRequest
+        publishRequest: PushNotifications.PublishRequest,
     ): Promise<PushNotifications.PublishResponse>;
 
     /**
@@ -316,7 +316,7 @@ declare class PushNotifications {
      */
     publishToUsers<T extends PushNotifications.PublishRequest>(
         users: string[],
-        publishRequest: PushNotifications.PublishRequest
+        publishRequest: PushNotifications.PublishRequest,
     ): Promise<PushNotifications.PublishResponse>;
 
     /**
@@ -333,7 +333,7 @@ declare class PushNotifications {
      */
     publish<T extends PushNotifications.PublishRequest>(
         interests: string[],
-        publishRequest: T
+        publishRequest: T,
     ): Promise<PushNotifications.PublishResponse>;
 }
 
